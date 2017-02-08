@@ -1,5 +1,5 @@
 {
-  "name": "video_calling",
+  "name": "plivo_calling",
   "version": "0.0.1",
   "description": "a starter project of express 4X + angular 1.4 for video calling",
   "main": "app.js",
@@ -16,8 +16,8 @@
     "fs": "0.0.1-security",
     "http": "0.0.0",
     "https": "^1.0.0",
-    "websocket": "^1.0.24",
+    "path": "^0.12.7",
     "plivo": "^0.4.0",
-    "path": "^0.12.7"
+    "websocket": "^1.0.24"
   }
 }

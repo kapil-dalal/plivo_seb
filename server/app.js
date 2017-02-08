@@ -24,8 +24,8 @@ var options = {
    cert: fs.readFileSync(__dirname + '/ssl/cert_new_1.crt', 'utf8')
 };
 
-var httpsNodeServer = https.createServer(options, app).listen(444, function () {
-   console.log('https server listen on 444')
+var httpsNodeServer = https.createServer(options, app).listen(3001, function () {
+   console.log('https server listen on 3001')
 });
 
 app.listen(3000, function () {
