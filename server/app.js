@@ -1,7 +1,10 @@
+var https = require('https');
 var express = require('express');
 var app = express();
 var util = require('util');
 var bodyParser = require('body-parser');
+var path = require('path');
+var fs = require('fs');
 var path = require('path');
 
 var routes = require('./routes/router');
@@ -16,6 +19,14 @@ app.use('/', routes);
 //     console.log('API Response:\n', response);
 // });
 
+var options = {
+   key: fs.readFileSync(__dirname + '/ssl/key_new_1.key', 'utf8'),
+   cert: fs.readFileSync(__dirname + '/ssl/cert_new_1.crt', 'utf8')
+};
+
+var httpsNodeServer = https.createServer(options, app).listen(444, function () {
+   console.log('https server listen on 444')
+});
 
 app.listen(3000, function () {
    console.log('Node app is running on port', 3000);
