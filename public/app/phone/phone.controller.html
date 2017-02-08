@@ -1,0 +1,82 @@
+<div class="container-narrow">
+   <div class="masthead">
+         <img class="muted" src="../../assets/logo.png">
+   </div>
+   <hr/>
+   <div class="row-fluid marketing">
+         <div class="span12">
+
+            <h4>Kapil Web Solution</h4>
+            <p>Make a call to number using country code</p>
+
+            <hr/>
+            <div id="logout_box" ng-show="logoutBox">
+               <input class="btn" type="button" id="btn_logout" ng-click="logout()" value="Logout">
+               <br/>
+            </div>
+
+            <span class="label" id="status_txt">{{statusTxt}}</span><br/><br/>
+
+
+            <form id="login_box" ng-hide="true" title="Login">
+               <label>Username</label>
+               <input type="text" ng-model="userName" value="" id="username">
+
+               <br/>
+
+               <label>Password</label>
+               <input type="password" ng-model="password" value="" id="password">
+
+               <br/>
+
+            </form>
+            <input class="btn" type="button" id="btn_login" ng-show="loginButton" ng-click="login()" value="Login">
+
+            <form id="callcontainer" ng-show="callContainerBox" style="display: block">
+               <input type="text" name="to" id="to" ng-model="sip" ng-hide="true" placeholder="Phone number or a SIP URI">
+               <br/>
+               <a href="#" id="make_call" class="btn main-btn btn-success" ng-click="call();">{{makeCallTxt}}</a>
+
+            </form>
+            <div id="incoming_callbox" style="display: none;" class="call">
+               <a href="#" class="btn main-btn btn-success" ng-click="answer()">Answer</a>
+               <a href="#" class="btn main-btn btn-danger" ng-click="reject()">Reject</a>
+            </div>
+
+            <div id="btn-container" ng-show="btnContainerBox" style="display: block">
+               <a href="#" id="hangup_call" class="btn main-btn btn-danger" ng-click="hangup();">Hangup</a>
+               <a href="#" id="linkMute" ng-show="linkMute" class="badge badge-warning" ng-click="mute();">Mute</a>
+               <a href="#" id="linkUnmute" ng-show="linkUnmute" class="badge badge-warning" ng-click="unmute();" style="display: none">Unmute</a><br/>
+
+               <a class="btn btn-info" href="#" ng-click="dtmf('1');">1</a>
+               <a class="btn btn-info" href="#" ng-click="dtmf('2');">2</a>
+               <a class="btn btn-info" href="#" ng-click="dtmf('3');">3</a>
+
+               <br/>
+
+               <a class="btn btn-info" href="#" ng-click="dtmf('4');">4</a>
+               <a class="btn btn-info" href="#" ng-click="dtmf('5');">5</a>
+               <a class="btn btn-info" href="#" ng-click="dtmf('6');">6</a>
+
+               <br/>
+
+               <a class="btn btn-info" href="#" ng-click="dtmf('7');">7</a>
+               <a class="btn btn-info" href="#" ng-click="dtmf('8');">8</a>
+               <a class="btn btn-info" href="#" ng-click="dtmf('9');">9</a>
+
+               <br/>
+
+               <a class="btn btn-info" href="#" ng-click="dtmf('*');">*</a>
+               <a class="btn btn-info" href="#" ng-click="dtmf('0');">0</a>
+               <a class="btn btn-info" href="#" ng-click="dtmf('#');"> #</a>
+
+               <br/>
+            </div>
+         </div>
+         <hr/>
+
+         <div class="footer">
+            <p>© Kapil 2017</p>
+         </div>
+   </div>
+</div>

@@ -1,0 +1,21 @@
+{
+  "name": "video_calling",
+  "version": "0.0.1",
+  "description": "a starter project of express 4X + angular 1.4 for video calling",
+  "main": "app.js",
+  "scripts": {},
+  "keywords": [
+    "node",
+    "express",
+    "angular"
+  ],
+  "author": "kapil dalal",
+  "dependencies": {
+    "body-parser": "^1.12.3",
+    "express": "^4.12.3",
+    "fs": "0.0.1-security",
+    "http": "0.0.0",
+    "https": "^1.0.0",
+    "websocket": "^1.0.24"
+  }
+}

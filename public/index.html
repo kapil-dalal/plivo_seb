@@ -1,0 +1,45 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Video Calling">
+    <meta name="author" content="XIE Qianyue">
+    <title>Video Calling</title>
+    <script language="javascript" content-type="text/javascript" src="assets/jquery.js"></script>
+    <link href="assets/css/externe/bootstrap-3.3.7-dist/css/bootstrap.min.css " rel="stylesheet" />
+    <link href="assets/bootstrap-combined.min.css" rel="stylesheet">
+    <link href="assets/css/styles.css " rel="stylesheet" />
+
+    <link href="app/phone/phone.css " rel="stylesheet" />
+    <base href="/">
+</head>
+
+<body ng-app="plivo">
+    <div>
+      <div >
+         <div ui-view></div>
+      </div>
+    </div>
+    <script src="lib/plivo/plivo.min.js"></script>
+    <script src="lib/angular/angular.js"></script>
+    <script src="lib/angular_router/angular-ui-router.js"></script>
+    <script src="lib/websocket/angular-websocket.js"></script>
+    <script src="app/app-angular.js"></script>
+
+    <!--common js-->
+    <script src="app/common/common.js"></script>
+    <!--services-->
+    <!--<script src="/scripts/services/browser-detection.service.js"></script>
+    <script src="/scripts/services/websocket.service.js"></script>
+    <script src="/scripts/services/recordrtc.service.js"></script>
+    <script src="/scripts/services/stream.service.js"></script>
+    <script src="/scripts/services/peer-connection.service.js"></script>
+    <script src="/scripts/services/webrtc.service.js"></script>-->
+    
+    <!--controllers-->
+    <script src="app/phone/phone.controller.js"></script>
+    <script src="app/home/home.controller.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,16 @@
+<div class="jumbotron" style="padding:40px;">
+<h3>Welcome to video calling</h3>
+   <video id="videoElement" controls autoplay="false" style="border: 1px solid black" height="225px"
+         width="300px">
+   </video>
+   <video id="recorded" controls autoplay="false" style="border: 1px solid black" height="225px" width="300px" autoplay></video>
+   <br>
+   <input type="button" value="user 1" ng-click="userOne()" />
+   <input type="button" value="user 2" ng-click="userTwo()" />
+   <input type="button" value="call" ng-click="doCall()" />
+   <input type="button" value="end call" ng-click="endCall()" />
+   <input type="button" value="muteUnmuteAudio" ng-click="muteUnmuteAudio()" />
+   <input type="button" value="muteUnmuteVideo" ng-click="muteUnmuteVideo()" />
+   <input type="button" value="muteUnMute" ng-click="muteUnMute()" />
+   <input type="button" value="Go To Text Chat" ng-click="goToTextChat()" />
+</div>
