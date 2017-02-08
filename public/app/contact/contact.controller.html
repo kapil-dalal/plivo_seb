@@ -30,10 +30,10 @@
                <br/>
 
             </form>
-            <input class="btn" type="button" id="btn_login" ng-show="loginButton" ng-click="login()" value="Login">
+            <!--<input class="btn" type="button" id="btn_login" ng-show="loginButton" ng-click="login()" value="Login">-->
 
-            <input class="btn" type="button" ng-click="user1()" value="User 1">
-            <input class="btn" type="button" ng-click="user2()" value="user 2">
+            <input class="btn" type="button" ng-show="loginButton" ng-click="user1()" value="User 1">
+            <input class="btn" type="button" ng-show="loginButton" ng-click="user2()" value="user 2">
 
             <form id="callcontainer" ng-show="callContainerBox" style="display: block">
                <input type="text" name="to" id="to" ng-model="sip" ng-hide="true" placeholder="Phone number or a SIP URI">
