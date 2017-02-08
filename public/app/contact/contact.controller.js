@@ -14,7 +14,7 @@ app.controller('contactController', ["$scope",
       $scope.btnContainerBox = false;
       $scope.linkMute = false;
       $scope.linkUnmute = false;
-      $scope.loginButton = false;
+      $scope.loginButton = true;
       // buttons
       $scope.loginBox = true;
       $scope.logoutBox = false;
