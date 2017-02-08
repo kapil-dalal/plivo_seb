@@ -8,8 +8,8 @@ var p = plivo.RestAPI({
 var mySIP = 'sip:kapildalal170125053249@phone.plivo.com';
 
 function userSelection(request, response, cb) {
-   var data = request.query || request.body;
-   console.log('userSelection request data: ', data);
+   var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
+   console.log('userSelection request data: ', request.query, request.body);
 
    var digit = data.Digits;
    var plivoResponse = plivo.Response();
@@ -44,7 +44,7 @@ function wrongSelection(request, response, plivoResponse, call_uuid, cb) {
       'call_uuid': call_uuid // UUID of the call to be hung up
    };
    plivoResponse.addSpeak('Thankyou for calling');
-   cb(r.toXML());
+   cb(plivoResponse.toXML());
    setTimeout(function () {
       p.hangup_call(params, function (status, response) {
          console.log('Status: ', status);
