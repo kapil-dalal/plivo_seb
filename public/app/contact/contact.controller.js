@@ -166,6 +166,7 @@ app.controller('contactController', ["$scope",
       $scope.call = function () {
          if ($scope.makeCallTxt == "Call") {
             var dest = $scope.sip;
+            console.log('dest: ', dest);
             if (dest && isNotEmpty(dest)) {
                $scope.statusTxt = 'Calling..';
                $scope.makeCallTxt = 'End';
