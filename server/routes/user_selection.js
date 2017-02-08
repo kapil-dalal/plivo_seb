@@ -14,15 +14,15 @@ function userSelection(request, response, cb) {
    var digit = data.Digits;
    var plivoResponse = plivo.Response();
    if (digit === "1") {
-      selectedOne(request, response, plivoResponse, cb);
+      selectedOne(request, response, plivoResponse, data, cb);
    } else if (digit === "2") {
-      selectedTwo(request, response, plivoResponse, cb);
+      selectedTwo(request, response, plivoResponse, data, cb);
    } else {
-      wrongSelection(request, response, plivoResponse, data.CallUUID, cb);
+      wrongSelection(request, response, plivoResponse, data, cb);
    }
 }
 
-function selectedOne(request, response, plivoResponse, cb) {
+function selectedOne(request, response, plivoResponse, data, cb) {
    plivoResponse.addSpeak('Connecting your call');
    var d = plivoResponse.addDial();
    var to = request.params.to || "+917065201417";// || "+918588842775";
@@ -30,8 +30,12 @@ function selectedOne(request, response, plivoResponse, cb) {
    cb(plivoResponse.toXML());
 }
 
-function selectedTwo(request, response, plivoResponse, cb) {
-   var dial_element = plivoResponse.addDial();
+function selectedTwo(request, response, plivoResponse, data, cb) {
+   var clid = data.From;
+   var params = {
+      callerId: clid
+   };
+   var dial_element = plivoResponse.addDial(params);
    dial_element.addUser(mySIP);
    // dial_element.addNumber('+918588842775');
 
@@ -39,9 +43,9 @@ function selectedTwo(request, response, plivoResponse, cb) {
    cb(plivoResponse.toXML());
 }
 
-function wrongSelection(request, response, plivoResponse, call_uuid, cb) {
+function wrongSelection(request, response, plivoResponse, data, cb) {
    var params = {
-      'call_uuid': call_uuid // UUID of the call to be hung up
+      'call_uuid': data.CallUUID // UUID of the call to be hung up
    };
    plivoResponse.addSpeak('Thankyou for calling');
    cb(plivoResponse.toXML());
