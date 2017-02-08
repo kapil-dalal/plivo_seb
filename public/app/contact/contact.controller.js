@@ -4,12 +4,12 @@ app.controller('contactController', ["$scope",
 
       // variables
       $scope.userName = '';
-      $scope.userName1 = 'kapildalal170125053249';
-      $scope.userName2 = 'kd170208152617';
+      $scope.userName1 = 'kapilmakecall170208155025';
+      $scope.userName2 = 'kapilagent1170208155150';
       $scope.password = 'kapil@1234';
       $scope.statusTxt = '';
       $scope.makeCallTxt = '';
-      $scope.sip = 'sip:kapildalal170125053249@phone.plivo.com';
+      $scope.sip = 'sip:kapilreceivecall170208155117@phone.plivo.com';
       $scope.sip1 = '+918588842775';
       $scope.btnContainerBox = false;
       $scope.linkMute = false;
