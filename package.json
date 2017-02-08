@@ -16,6 +16,8 @@
     "fs": "0.0.1-security",
     "http": "0.0.0",
     "https": "^1.0.0",
-    "websocket": "^1.0.24"
+    "websocket": "^1.0.24",
+    "plivo": "^0.4.24",
+    "path": "^0.12.7"
   }
 }
