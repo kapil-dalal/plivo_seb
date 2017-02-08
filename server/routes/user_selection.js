@@ -17,6 +17,9 @@ function userSelection(request, response, cb) {
       selectedOne(request, response, plivoResponse, data, cb);
    } else if (digit === "2") {
       selectedTwo(request, response, plivoResponse, data, cb);
+   } else if (digit === "3") {
+      plivoResponse.addSpeak('you pressed 3. Connecting your call');
+      cb(plivoResponse.toXML());
    } else {
       wrongSelection(request, response, plivoResponse, data, cb);
    }
@@ -27,7 +30,7 @@ function selectedOne(request, response, plivoResponse, data, cb) {
    var d = plivoResponse.addDial();
    var to = request.params.to || "+917065201417";// || "+918588842775";
    d.addNumber(to);
-   console.log('plivoResponse.toXML(): ',plivoResponse.toXML());
+   console.log('plivoResponse.toXML(): ', plivoResponse.toXML());
    cb(plivoResponse.toXML());
 }
 
