@@ -3,12 +3,14 @@ app.controller('contactController', ["$scope",
       console.log('phoneController called');
 
       // variables
-      $scope.userName = 'kapildalal170125053249';
+      $scope.userName = '';
+      $scope.userName1 = 'kapildalal170125053249';
+      $scope.userName2 = 'kd170208152617';
       $scope.password = 'kapil@1234';
       $scope.statusTxt = '';
       $scope.makeCallTxt = '';
-      $scope.sip1 = 'sip:kapildalal170125053249@phone.plivo.com';
-      $scope.sip = '+918588842775';
+      $scope.sip = 'sip:kapildalal170125053249@phone.plivo.com';
+      $scope.sip1 = '+918588842775';
       $scope.btnContainerBox = false;
       $scope.linkMute = false;
       $scope.linkUnmute = false;
@@ -20,14 +22,24 @@ app.controller('contactController', ["$scope",
 
       function onReady() {
          console.log("onReady...");
-         $scope.statusTxt = 'Logging-in';
+         $scope.statusTxt = 'Login';
          $scope.loginBox = true;
-         $scope.login();
       }
 
-      $scope.login = function () {
+      $scope.user1 = function () {
+         $scope.userName = $scope.userName1;
+         login();
+      }
+
+      $scope.user2 = function () {
+         $scope.userName = $scope.userName2;
+         login();
+      }
+
+      login = function () {
          console.log('user name, password: ', $scope.userName, $scope.password);
          if ($scope.userName && $scope.password) {
+            $scope.statusTxt = 'Logging-in';
             Plivo.conn.login($scope.userName, $scope.password);
          }
       }
@@ -39,7 +51,9 @@ app.controller('contactController', ["$scope",
          $scope.loginBox = false;
          $scope.logoutBox = true;
          $scope.loginButton = false;
-         $scope.$apply();
+         setTimeout(function () {
+            $scope.$apply();
+         }, 0);
       }
 
       $scope.logout = function () {
@@ -55,7 +69,9 @@ app.controller('contactController', ["$scope",
          $scope.loginBox = true;
          $scope.logoutBox = false;
          $scope.loginButton = true;
-         $scope.$apply();
+         setTimeout(function () {
+            $scope.$apply();
+         }, 0);
       }
 
 
@@ -96,7 +112,7 @@ app.controller('contactController', ["$scope",
          $scope.makeCallTxt = 'Call';
          setTimeout(function () {
             $scope.$apply();
-         }, 0)
+         }, 0);
       }
 
       function IncomingCallUI() {
@@ -110,7 +126,9 @@ app.controller('contactController', ["$scope",
          $('#incoming_callbox').hide('slow');
          $scope.callContainerBox = false;
          dialpadShow();
-         $scope.$apply();
+         setTimeout(function () {
+            $scope.$apply();
+         }, 0);
       }
 
       function onLoginFailed() {
