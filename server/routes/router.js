@@ -60,10 +60,10 @@ router.get('/receive_call/', function (request, response) {
 
 router.all('/user_selection/:to', function (request, response) {
    require('./user_selection').userSelection(request, response, function (result) {
-      res.set({
+      response.set({
          'Content-Type': 'text/xml'
       });
-      res.send(result);
+      response.send(result);
    });
 });
 
