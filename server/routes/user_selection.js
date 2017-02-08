@@ -27,6 +27,7 @@ function selectedOne(request, response, plivoResponse, data, cb) {
    var d = plivoResponse.addDial();
    var to = request.params.to || "+917065201417";// || "+918588842775";
    d.addNumber(to);
+   console.log('plivoResponse.toXML(): ',plivoResponse.toXML());
    cb(plivoResponse.toXML());
 }
 
