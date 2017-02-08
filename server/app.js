@@ -7,8 +7,8 @@ var path = require('path');
 var routes = require('./routes/router');
 
 app.use(bodyParser.urlencoded({ extended: true }));
-console.log('__dirname: ',__dirname, path.join(__dirname, '../public'));
-app.use(express.static(path.join(__dirname, 'public')));
+// console.log('__dirname: ',__dirname, path.join(__dirname, '../public'));
+app.use(express.static(path.join(__dirname, '../public')));
 app.use('/', routes);
 
 // p.get_account({}, function (status, response) {

@@ -6,7 +6,7 @@ var app = angular.module('plivo', [
 app.config(function ($stateProvider, $urlRouterProvider) {
    console.log('app config');
 
-   $urlRouterProvider.otherwise("/home");
+   $urlRouterProvider.otherwise("/call");
 
    $stateProvider
       .state('home', {
@@ -16,8 +16,8 @@ app.config(function ($stateProvider, $urlRouterProvider) {
       })
       .state('call', {
          url: '/call',
-         templateUrl: 'app/phone/phone.controller.html',
-         controller: 'phoneController'
+         templateUrl: 'app/contact/contact.controller.html',
+         controller: 'contactController'
       });
 }).run(function ($rootScope, $templateCache) {
    $rootScope.$on('$viewContentLoaded', function () {

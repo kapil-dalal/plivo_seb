@@ -1,4 +1,4 @@
-app.controller('phoneController', ["$scope",
+app.controller('contactController', ["$scope",
    function ($scope) {
       console.log('phoneController called');
 
