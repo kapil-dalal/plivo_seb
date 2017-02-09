@@ -28,7 +28,7 @@ function userSelection(request, response, cb) {
 function selectedOne(request, response, plivoResponse, data, cb) {
    plivoResponse.addSpeak('Connecting your call');
    var params = {
-      callerId: clid,
+      callerId: data.From,
       dialMusic: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/" // Music to be played to the caller while the call is being connected.
    };
    var d = plivoResponse.addDial(params);
@@ -39,9 +39,8 @@ function selectedOne(request, response, plivoResponse, data, cb) {
 }
 
 function selectedTwo(request, response, plivoResponse, data, cb) {
-   var clid = data.From;
    var params = {
-      callerId: clid,
+      callerId: data.From,
       dialMusic: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/" // Music to be played to the caller while the call is being connected.
    };
    var dial_element = plivoResponse.addDial(params);
