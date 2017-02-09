@@ -1,7 +1,7 @@
 {
   "name": "plivo_calling",
   "version": "0.0.1",
-  "description": "a starter project of express 4X + angular 1.4 for video calling",
+  "description": "a starter project of express 4X + angular 1.4 for plivo calling",
   "main": "app.js",
   "scripts": {},
   "keywords": [
