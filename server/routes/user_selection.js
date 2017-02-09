@@ -37,7 +37,8 @@ function selectedOne(request, response, plivoResponse, data, cb) {
 function selectedTwo(request, response, plivoResponse, data, cb) {
    var clid = data.From;
    var params = {
-      callerId: clid
+      callerId: clid,
+      dialMusic: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/" // Music to be played to the caller while the call is being connected.
    };
    var dial_element = plivoResponse.addDial(params);
    dial_element.addUser(mySIP);

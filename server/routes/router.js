@@ -81,6 +81,19 @@ router.get('/forward_call/', function (req, res) {
    res.end(r.toXML());
 });
 
+app.all('/custom_ringing_tone/', function (request, response) {
+   var r = plivo.Response();
+
+   r.addPlay("https://s3.amazonaws.com/plivocloud/music.mp3");
+   console.log('custom_ringing_tone: ' + r.toXML());
+
+   response.set({
+      'Content-Type': 'text/xml'
+   });
+   response.end(r.toXML());
+
+});
+
 router.get('/speak/', function (request, response) {
    // Generate a Speak XML with the details of the text to play on the call.
    var r = plivo.Response();
