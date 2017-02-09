@@ -81,7 +81,7 @@ router.get('/forward_call/', function (req, res) {
    res.end(r.toXML());
 });
 
-app.all('/custom_ringing_tone/', function (request, response) {
+router.all('/custom_ringing_tone/', function (request, response) {
    var r = plivo.Response();
 
    r.addPlay("https://s3.amazonaws.com/plivocloud/music.mp3");
