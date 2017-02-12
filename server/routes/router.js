@@ -9,7 +9,7 @@ var p = plivo.RestAPI({
 });
 var PLIVO_SONG = "https://s3.amazonaws.com/plivocloud/music.mp3";
 
-var IVR_MESSAGE1 = "Welcome to the Plivo. Press 1 to forward the call. Press 2 to call on S.I.P.";
+var IVR_MESSAGE1 = "Welcome to the Plivo. Press 1 to forward the call. Press 2 to call on S.I.P. Press 3 for connect directly. Press 4 for wait to receive call.";
 
 var NO_INPUT_MESSAGE = "Sorry, I didn't catch that. Please hangup and try again later.";
 

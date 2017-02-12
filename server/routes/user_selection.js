@@ -1,9 +1,11 @@
 var plivo = require('plivo');
-
+var authId = 'MAM2M4ZGE3NJIWMGRIM2';
 var p = plivo.RestAPI({
    authId: 'MAM2M4ZGE3NJIWMGRIM2',
    authToken: 'MzhlYjBhOGExNGQ0NzI0ZDY4YjFkOWM4MzEwNjI3'
 });
+
+var customerWiseResponse = {};
 
 var mySIP = 'sip:kapilagent1170208155150@phone.plivo.com';
 
@@ -20,9 +22,33 @@ function userSelection(request, response, cb) {
    } else if (digit === "3") {
       plivoResponse.addSpeak('you pressed 3. Connecting your call');
       cb(plivoResponse.toXML());
+   } else if (digit === "4") {
+      selectedTwo(request, response, plivoResponse, data, cb);
    } else {
       wrongSelection(request, response, plivoResponse, data, cb);
    }
+}
+function selectedFour(request, response, plivoResponse, data, cb) {
+   plivoResponse.addSpeak('you pressed 4. Connecting your call');
+   var params = {
+      urls: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/",
+      length: 120,
+   };
+   var holdCallUrl = 'https://api.plivo.com/v1/Account/' + authId + '/Call/' + data.CallUUID + '/Play/';
+   console.log('selectedFour holdCallUrl: ', holdCallUrl);
+   var request = require('request');
+   request.post({
+      headers: { 'Content-Type': 'text/xml' },
+      url: holdCallUrl,
+      form: params
+   }, function (error, holeResponse, body) {
+      console.log('selectedFour after request post call error: ', error);
+      console.log('selectedFour after request post call body: ', body);
+      console.log('selectedFour after request post call holeResponse: ', holeResponse);
+      console.log('selectedFour plivoResponse.toXML(): ', plivoResponse.toXML());
+      customerWiseResponse[data.CallUUID] = response;
+      // cb(plivoResponse.toXML());
+   });
 }
 
 function selectedOne(request, response, plivoResponse, data, cb) {
