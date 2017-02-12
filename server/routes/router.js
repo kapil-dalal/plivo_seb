@@ -137,7 +137,7 @@ router.all('/confrence_callback/', function (request, response) {
    // });
 
 
-   response.send();
+   // response.send();
 });
 
 router.all('/play/', function (request, response) {
