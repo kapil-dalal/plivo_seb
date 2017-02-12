@@ -31,23 +31,16 @@ function userSelection(request, response, cb) {
 function selectedFour(request, response, plivoResponse, data, cb) {
    plivoResponse.addSpeak('you pressed 4. Connecting your call');
    var params = {
-      urls: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/",
+      urls: "https://s3.amazonaws.com/plivocloud/music.mp3",
       length: 120,
+      'call_uuid': data.CallUUID
    };
-   var holdCallUrl = 'https://api.plivo.com/v1/Account/' + authId + '/Call/' + data.CallUUID + '/Play/';
-   console.log('selectedFour holdCallUrl: ', holdCallUrl);
-   var request = require('request');
-   request.post({
-      headers: { 'Content-Type': 'text/xml' },
-      url: holdCallUrl,
-      form: params
-   }, function (error, holeResponse, body) {
-      console.log('selectedFour after request post call error: ', error);
-      console.log('selectedFour after request post call body: ', body);
+   console.log('selectedFour params: ', params);
+   p.play(params, function (status, holeResponse) {
+      console.log('selectedFour after request post call Status: ', status);
       console.log('selectedFour after request post call holeResponse: ', holeResponse);
       console.log('selectedFour plivoResponse.toXML(): ', plivoResponse.toXML());
       customerWiseResponse[data.CallUUID] = response;
-      // cb(plivoResponse.toXML());
    });
 }
 
