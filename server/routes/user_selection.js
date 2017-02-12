@@ -23,7 +23,7 @@ function userSelection(request, response, cb) {
       plivoResponse.addSpeak('you pressed 3. Connecting your call');
       cb(plivoResponse.toXML());
    } else if (digit === "4") {
-      selectedTwo(request, response, plivoResponse, data, cb);
+      selectedFour(request, response, plivoResponse, data, cb);
    } else {
       wrongSelection(request, response, plivoResponse, data, cb);
    }
