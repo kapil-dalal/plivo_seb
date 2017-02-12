@@ -137,8 +137,8 @@ router.all('/confrence_callback/', function (request, response) {
    // });
    var mySIP = 'sip:kapilagent1170208155150@phone.plivo.com';
    var r = plivo.Response();
-   r.addDial();
-   r.addUser(mySIP);
+   var dial_element = r.addDial();
+   dial_element.addUser(mySIP);
    console.log('confrence_callback XML: ', r.toXML());
    response.send(r.toXML());
 });
