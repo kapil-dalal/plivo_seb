@@ -36,8 +36,8 @@ function selectedFour(request, response, plivoResponse, data, cb) {
       // 'record': "true", // Option to record the call
       'action': request.protocol + '://' + request.headers.host + "/play/", // URL to which the API can send back parameters
       'method': "GET", // method to invoke the action Url
-      // 'callbackUrl': request.protocol + '://' + request.headers.host + "/play/", // If specified, information is sent back to this URL
-      // 'callbackMethod': "GET", // Method used to notify callbackUrl
+      'callbackUrl': request.protocol + '://' + request.headers.host + "/confrence_callback/", // If specified, information is sent back to this URL
+      'callbackMethod': "GET", // Method used to notify callbackUrl
       // For moderated conference
       // 'startConferenceOnEnter': "true", // When a member joins the conference with this attribute set to true, the conference is started.
       // If a member joins a conference that has not yet started, with this attribute value set to false, 

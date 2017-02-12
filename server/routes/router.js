@@ -109,7 +109,7 @@ router.all('/custom_ringing_tone/', function (request, response) {
          // dial_element.addNumber('+918588842775');
 
          plivoResponse.addSpeak('Connecting your call');
-         response.send(plivoResponse.toXML());
+         // response.send(plivoResponse.toXML());
 
       });
    }, 20000);
@@ -119,6 +119,25 @@ router.all('/custom_ringing_tone/', function (request, response) {
    });
    response.end(r.toXML());
 
+});
+
+router.all('/confrence_callback/', function (request, response) {
+   console.log('call on uri /confrence_callback/');
+   var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
+   console.log('/confrence_callback/ to hold call data: ', data);
+   // var params = {
+   //    call_uuid: data.CallUUID,
+   //    urls: "https://s3.amazonaws.com/plivocloud/music.mp3",
+   //    length: 120,
+   // };
+   // console.log('/play/ to hold call params: ', params);
+   // p.play(params, function (status, holeResponse) {
+   //    console.log('/play/ after request post call Status: ', status);
+   //    console.log('/play/ after request post call holeResponse: ', holeResponse);
+   // });
+
+
+   response.send();
 });
 
 router.all('/play/', function (request, response) {
