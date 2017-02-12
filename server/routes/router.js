@@ -87,6 +87,33 @@ router.all('/custom_ringing_tone/', function (request, response) {
    r.addPlay("https://s3.amazonaws.com/plivocloud/music.mp3");
    console.log('custom_ringing_tone: ' + r.toXML());
 
+   var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
+   console.log('/custom_ringing_tone/ to queue call data: ', data);
+
+   setTimeout(function () {
+      var params = {
+         'call_uuid': data.CallUUID
+      };
+      console.log('after 20 second to transfer the call: ', params);
+      p.get_cdr(params, function (status, response) {
+         console.log('call details status: ', status);
+         console.log('call details API Response: ', response);
+         var plivoResponse = plivo.Response();
+         var params = {
+            callerId: data.From,
+            dialMusic: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/" // Music to be played to the caller while the call is being connected.
+         };
+         var mySIP = 'sip:kapilagent1170208155150@phone.plivo.com';
+         var dial_element = plivoResponse.addDial(params);
+         dial_element.addUser(mySIP);
+         // dial_element.addNumber('+918588842775');
+
+         plivoResponse.addSpeak('Connecting your call');
+         response.send(plivoResponse.toXML());
+
+      });
+   }, 20000);
+
    response.set({
       'Content-Type': 'text/xml'
    });
@@ -96,11 +123,6 @@ router.all('/custom_ringing_tone/', function (request, response) {
 
 router.all('/play/', function (request, response) {
    console.log('call on uri /play/');
-   // var p = plivo.RestAPI({
-   //    authId: 'MAM2M4ZGE3NJIWMGRIM2',
-   //    authToken: 'MzhlYjBhOGExNGQ0NzI0ZDY4YjFkOWM4MzEwNjI3'
-   // });
-
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
    console.log('/play/ to hold call data: ', data);
    // var params = {
@@ -113,6 +135,8 @@ router.all('/play/', function (request, response) {
    //    console.log('/play/ after request post call Status: ', status);
    //    console.log('/play/ after request post call holeResponse: ', holeResponse);
    // });
+
+
    response.send();
 });
 

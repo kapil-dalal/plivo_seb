@@ -30,9 +30,9 @@ function userSelection(request, response, cb) {
 }
 function selectedFour(request, response, plivoResponse, data, cb) {
 
-   plivoResponse.addSpeak("you pressed 4. Connecting your call. You will now be placed into a demo conference. This is brought to you by Plivo. To know more visit us at plivo.com");
+   plivoResponse.addSpeak("you pressed 4. Connecting your call.");
    var params = {
-      'enterSound': "beep:2", // Used to play a sound when a member enters the conference
+      // 'enterSound': "beep:2", // Used to play a sound when a member enters the conference
       // 'record': "true", // Option to record the call
       'action': request.protocol + '://' + request.headers.host + "/play/", // URL to which the API can send back parameters
       'method': "GET", // method to invoke the action Url
