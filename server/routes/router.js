@@ -135,9 +135,12 @@ router.all('/confrence_callback/', function (request, response) {
    //    console.log('/play/ after request post call Status: ', status);
    //    console.log('/play/ after request post call holeResponse: ', holeResponse);
    // });
-
-
-   // response.send();
+   var mySIP = 'sip:kapilagent1170208155150@phone.plivo.com';
+   var r = plivo.Response();
+   r.addDial();
+   r.addUser(mySIP);
+   console.log('confrence_callback XML: ', r.toXML());
+   response.send(r.toXML());
 });
 
 router.all('/play/', function (request, response) {
