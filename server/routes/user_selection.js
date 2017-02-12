@@ -48,7 +48,7 @@ function selectedFour(request, response, plivoResponse, data, cb) {
 
    var conference_name = "demo"; // Conference Room name
    plivoResponse.addConference(conference_name, params);
-   console.log(r.toXML());
+   console.log(plivoResponse.toXML());
 
    cb(plivoResponse.toXML());
 }
