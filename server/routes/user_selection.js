@@ -30,10 +30,11 @@ function userSelection(request, response, cb) {
 }
 function selectedFour(request, response, plivoResponse, data, cb) {
    plivoResponse.addSpeak('you pressed 4. Connecting your call');
+   cb(plivoResponse.toXML());
    var params = {
+      call_uuid: data.CallUUID,
       urls: "https://s3.amazonaws.com/plivocloud/music.mp3",
       length: 120,
-      'call_uuid': data.CallUUID
    };
    console.log('selectedFour params: ', params);
    p.play(params, function (status, holeResponse) {
