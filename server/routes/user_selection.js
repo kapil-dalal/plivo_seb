@@ -34,16 +34,17 @@ function selectedFour(request, response, plivoResponse, data, cb) {
    var params = {
       'enterSound': "beep:2", // Used to play a sound when a member enters the conference
       // 'record': "true", // Option to record the call
-      // 'action': "https://intense-brook-8241.herokuapp.com/conf_action/", // URL to which the API can send back parameters
-      // 'method': "GET", // method to invoke the action Url
-      'callbackUrl': request.protocol + '://' + request.headers.host + "/play/", // If specified, information is sent back to this URL
-      'callbackMethod': "GET", // Method used to notify callbackUrl
+      'action': request.protocol + '://' + request.headers.host + "/play/", // URL to which the API can send back parameters
+      'method': "GET", // method to invoke the action Url
+      // 'callbackUrl': request.protocol + '://' + request.headers.host + "/play/", // If specified, information is sent back to this URL
+      // 'callbackMethod': "GET", // Method used to notify callbackUrl
       // For moderated conference
       // 'startConferenceOnEnter': "true", // When a member joins the conference with this attribute set to true, the conference is started.
       // If a member joins a conference that has not yet started, with this attribute value set to false, 
       // the member is muted and hears background music until another member joins the conference
       // 'endConferenceOnExit': "true" // If a member with this attribute set to true leaves the conference, the conference ends and all 
       // other members are automatically removed from the conference. 
+      waitSound: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/"
    };
 
    var conference_name = "demo"; // Conference Room name

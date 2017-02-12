@@ -96,23 +96,24 @@ router.all('/custom_ringing_tone/', function (request, response) {
 
 router.all('/play/', function (request, response) {
    console.log('call on uri /play/');
-   var p = plivo.RestAPI({
-      authId: 'MAM2M4ZGE3NJIWMGRIM2',
-      authToken: 'MzhlYjBhOGExNGQ0NzI0ZDY4YjFkOWM4MzEwNjI3'
-   });
+   // var p = plivo.RestAPI({
+   //    authId: 'MAM2M4ZGE3NJIWMGRIM2',
+   //    authToken: 'MzhlYjBhOGExNGQ0NzI0ZDY4YjFkOWM4MzEwNjI3'
+   // });
 
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   var params = {
-      call_uuid: data.CallUUID,
-      urls: "https://s3.amazonaws.com/plivocloud/music.mp3",
-      length: 120,
-   };
-   console.log('/play/ to hold call params: ', params);
-   p.play(params, function (status, holeResponse) {
-      console.log('/play/ after request post call Status: ', status);
-      console.log('/play/ after request post call holeResponse: ', holeResponse);
-   });
-
+   console.log('/play/ to hold call data: ', data);
+   // var params = {
+   //    call_uuid: data.CallUUID,
+   //    urls: "https://s3.amazonaws.com/plivocloud/music.mp3",
+   //    length: 120,
+   // };
+   // console.log('/play/ to hold call params: ', params);
+   // p.play(params, function (status, holeResponse) {
+   //    console.log('/play/ after request post call Status: ', status);
+   //    console.log('/play/ after request post call holeResponse: ', holeResponse);
+   // });
+   response.send();
 });
 
 router.get('/speak/', function (request, response) {
