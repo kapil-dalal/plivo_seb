@@ -107,7 +107,7 @@ router.all('/dial/', function (request, response) {
    dial_element.addUser(mySIP);
    var xml = r.toXML();
    console.log('dial XML: ', xml);
-   res.set({
+   response.set({
       'Content-Type': 'text/xml'
    });
    response.send(xml);
@@ -116,7 +116,7 @@ router.all('/dial/', function (request, response) {
 router.all('/confrence_callback/', function (request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
    console.log('call on uri /confrence_callback/ to hold call data: ', data);
-   res.set({
+   response.set({
       'Content-Type': 'text/xml'
    });
    response.send();
