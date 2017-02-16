@@ -119,7 +119,7 @@ router.all('/confrence_callback/', function (request, response) {
    if (data.Event != 'ConferenceExit') {
       setTimeout(function () {
          var params = {
-            "legs": "aleg",
+            //"legs": "aleg",
             'call_uuid': data.CallUUID, // ID of the call
             'aleg_url': request.protocol + '://' + request.headers.host + "/dial/",
             'aleg_method': "GET"
