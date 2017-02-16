@@ -89,31 +89,6 @@ router.all('/custom_ringing_tone/', function (request, response) {
 
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
    console.log('/custom_ringing_tone/ to queue call data: ', data);
-
-   // setTimeout(function () {
-   //    var params = {
-   //       'call_uuid': data.CallUUID
-   //    };
-   //    console.log('after 20 second to transfer the call: ', params);
-   //    p.get_cdr(params, function (status, response) {
-   //       console.log('call details status: ', status);
-   //       console.log('call details API Response: ', response);
-   //       var plivoResponse = plivo.Response();
-   //       var params = {
-   //          callerId: data.From,
-   //          dialMusic: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/" // Music to be played to the caller while the call is being connected.
-   //       };
-   //       var mySIP = 'sip:kapilagent1170208155150@phone.plivo.com';
-   //       var dial_element = plivoResponse.addDial(params);
-   //       dial_element.addUser(mySIP);
-   //       // dial_element.addNumber('+918588842775');
-
-   //       plivoResponse.addSpeak('Connecting your call');
-   //       // response.send(plivoResponse.toXML());
-
-   //    });
-   // }, 20000);
-
    response.set({
       'Content-Type': 'text/xml'
    });
@@ -121,26 +96,38 @@ router.all('/custom_ringing_tone/', function (request, response) {
 
 });
 
-router.all('/confrence_callback/', function (request, response) {
+router.all('/dial/', function (request, response) {
    console.log('call on uri /confrence_callback/');
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
    console.log('/confrence_callback/ to hold call data: ', data);
-   // var params = {
-   //    call_uuid: data.CallUUID,
-   //    urls: "https://s3.amazonaws.com/plivocloud/music.mp3",
-   //    length: 120,
-   // };
-   // console.log('/play/ to hold call params: ', params);
-   // p.play(params, function (status, holeResponse) {
-   //    console.log('/play/ after request post call Status: ', status);
-   //    console.log('/play/ after request post call holeResponse: ', holeResponse);
-   // });
+
    var mySIP = 'sip:kapilagent1170208155150@phone.plivo.com';
    var r = plivo.Response();
    var dial_element = r.addDial();
    dial_element.addUser(mySIP);
-   console.log('confrence_callback XML: ', r.toXML());
+   console.log('dial XML: ', r.toXML());
    response.send(r.toXML());
+});
+
+router.all('/confrence_callback/', function (request, response) {
+   var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
+   console.log('call on uri /confrence_callback/ to hold call data: ', data);
+   response.send();
+
+   // test transfer call
+   setTimeout(function () {
+      var params = {
+         "legs": "aleg",
+         'call_uuid': data.CallUUID, // ID of the call
+         'aleg_url': request.protocol + '://' + request.headers.host + "/dial/",
+         'aleg_method': "GET"
+         // urls: "https://s3.amazonaws.com/plivocloud/music.mp3",
+         // length: 120,
+      };
+      console.log('after 20 second to transfer the call: ', params);
+      p.transfer_call(params);
+   }, 20000);
+
 });
 
 router.all('/play/', function (request, response) {
