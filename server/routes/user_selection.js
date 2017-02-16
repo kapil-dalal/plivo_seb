@@ -24,6 +24,14 @@ function userSelection(request, response, cb) {
       cb(plivoResponse.toXML());
    } else if (digit === "4") {
       selectedFour(request, response, plivoResponse, data, cb);
+   } else if (digit === "5") {
+      var params = {
+         'call_uuid': data.CallUUID, // ID of the call
+         'aleg_url': request.protocol + '://' + request.headers.host + "/dial/",
+         'aleg_method': "GET"
+      };
+      console.log('after 20 second to transfer the call: ', params);
+      p.transfer_call(params);
    } else {
       wrongSelection(request, response, plivoResponse, data, cb);
    }
