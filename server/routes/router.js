@@ -133,7 +133,7 @@ router.all('/confrence_callback/', function (request, response) {
             // length: 120,
          };
          console.log('after 20 second to transfer the call: ', params);
-         p.transfer_call(params);
+         console.log(p.transfer_call(params));
       }, 20000);
    }
 });
