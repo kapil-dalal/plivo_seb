@@ -30,9 +30,8 @@ function userSelection(request, response, cb) {
          'aleg_url': request.protocol + '://' + request.headers.host + "/dial/",
          'aleg_method': "GET"
       };
-      console.log('after 20 second to transfer the call: ', params);
-      console.log('uuid: ', request.param('CallUUID'));
       p.transfer_call(params);
+      response.send();
    } else {
       wrongSelection(request, response, plivoResponse, data, cb);
    }
