@@ -30,8 +30,7 @@ function userSelection(request, response, cb) {
          'aleg_url': request.protocol + '://' + request.headers.host + "/dial/",
          'aleg_method': "GET"
       };
-      p.transfer_call(params);
-      response.send();
+      return p.transfer_call(params);
    } else {
       wrongSelection(request, response, plivoResponse, data, cb);
    }
@@ -40,12 +39,8 @@ function selectedFour(request, response, plivoResponse, data, cb) {
 
    plivoResponse.addSpeak("you pressed 4. Connecting your call.");
    var params = {
-      // 'enterSound': "beep:2", // Used to play a sound when a member enters the conference
-      // 'record': "true", // Option to record the call
-      'action': request.protocol + '://' + request.headers.host + "/play/", // URL to which the API can send back parameters
-      'method': "GET", // method to invoke the action Url
-      'callbackUrl': request.protocol + '://' + request.headers.host + "/confrence_callback/", // If specified, information is sent back to this URL
-      'callbackMethod': "GET", // Method used to notify callbackUrl
+      callbackUrl: request.protocol + '://' + request.headers.host + "/confrence_callback/",
+      callbackMethod: "GET",
       waitSound: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/"
    };
 
