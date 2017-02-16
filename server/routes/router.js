@@ -105,8 +105,9 @@ router.all('/dial/', function (request, response) {
    var r = plivo.Response();
    var dial_element = r.addDial();
    dial_element.addUser(mySIP);
-   console.log('dial XML: ', r.toXML());
-   response.send(r.toXML());
+   var xml = r.toXML();
+   console.log('dial XML: ', xml);
+   response.send(xml);
 });
 
 router.all('/confrence_callback/', function (request, response) {
@@ -115,19 +116,20 @@ router.all('/confrence_callback/', function (request, response) {
    response.send();
 
    // test transfer call
-   setTimeout(function () {
-      var params = {
-         "legs": "aleg",
-         'call_uuid': data.CallUUID, // ID of the call
-         'aleg_url': request.protocol + '://' + request.headers.host + "/dial/",
-         'aleg_method': "GET"
-         // urls: "https://s3.amazonaws.com/plivocloud/music.mp3",
-         // length: 120,
-      };
-      console.log('after 20 second to transfer the call: ', params);
-      p.transfer_call(params);
-   }, 20000);
-
+   if (data.Event != 'ConferenceExit') {
+      setTimeout(function () {
+         var params = {
+            "legs": "aleg",
+            'call_uuid': data.CallUUID, // ID of the call
+            'aleg_url': request.protocol + '://' + request.headers.host + "/dial/",
+            'aleg_method': "GET"
+            // urls: "https://s3.amazonaws.com/plivocloud/music.mp3",
+            // length: 120,
+         };
+         console.log('after 20 second to transfer the call: ', params);
+         p.transfer_call(params);
+      }, 20000);
+   }
 });
 
 router.all('/play/', function (request, response) {
