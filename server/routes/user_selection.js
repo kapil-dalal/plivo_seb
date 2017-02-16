@@ -31,6 +31,7 @@ function userSelection(request, response, cb) {
          'aleg_method': "GET"
       };
       console.log('after 20 second to transfer the call: ', params);
+      console.log('uuid: ', request.param('CallUUID'));
       p.transfer_call(params);
    } else {
       wrongSelection(request, response, plivoResponse, data, cb);
