@@ -125,10 +125,10 @@ router.all('/confrence_callback/', function (request, response) {
    if (data.Event != 'ConferenceExit') {
       setTimeout(function () {
          var params = {
-            "legs": "bleg",
+            "legs": "aleg",
             'call_uuid': data.CallUUID, // ID of the call
-            'bleg_url': request.protocol + '://' + request.headers.host + "/dial/",
-            'bleg_method': "GET"
+            'aleg_url': request.protocol + '://' + request.headers.host + "/dial/",
+            'aleg_method': "GET"
             // urls: "https://s3.amazonaws.com/plivocloud/music.mp3",
             // length: 120,
          };
