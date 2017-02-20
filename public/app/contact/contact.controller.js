@@ -9,7 +9,8 @@ app.controller('contactController', ["$scope",
       $scope.password = 'kapil@1234';
       $scope.statusTxt = '';
       $scope.makeCallTxt = '';
-      $scope.sip = 'sip:kapilreceivecall170208155117@phone.plivo.com';
+      $scope.sipTest = 'sip:kapilreceivecall170208155117@phone.plivo.com';
+      $scope.sip = 'sip:kapilagent1170208155150@phone.plivo.com';
       $scope.sip1 = '+918588842775';
       $scope.btnContainerBox = false;
       $scope.linkMute = false;
