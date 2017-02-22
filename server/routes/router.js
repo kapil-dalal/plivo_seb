@@ -150,7 +150,7 @@ router.all('/confrence_callback/', function (request, response) {
 
 
          var getConParm = {
-            conference_id: data.CallUUID
+            conference_name: data.ConferenceName
          }
          console.log('after 20 second to transfer the call getConParm: ', getConParm);
          p.get_live_conference(getConParm, function (status, response) {
