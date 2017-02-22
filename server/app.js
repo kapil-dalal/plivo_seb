@@ -39,10 +39,15 @@ app.listen(3000, function () {
 // dbService.createDB();
 
 var plivo = require('plivo');
-// var p = plivo.RestAPI({
-//    authId: 'MAM2M4ZGE3NJIWMGRIM2',
-//    authToken: 'MzhlYjBhOGExNGQ0NzI0ZDY4YjFkOWM4MzEwNjI3'
-// });
+var p = plivo.RestAPI({
+   authId: 'MAM2M4ZGE3NJIWMGRIM2',
+   authToken: 'MzhlYjBhOGExNGQ0NzI0ZDY4YjFkOWM4MzEwNjI3'
+});
+
+p.get_live_conferences({}, function (status, response) {
+   console.log('get_live_conference Status: ', status);
+   console.log('get_live_conference API Response:\n', response);
+})
 
 // var params = {
 //     'endpoint_id': '77815552817411' // ID of the endpoint for which the details have to be retrieved

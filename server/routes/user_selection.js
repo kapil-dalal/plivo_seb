@@ -44,7 +44,7 @@ function selectedFour(request, response, plivoResponse, data, cb) {
       waitSound: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/"
    };
 
-   var conference_name = "demo"; // Conference Room name
+   var conference_name = "My Conf"; // Conference Room name
    plivoResponse.addConference(conference_name, params);
    console.log(plivoResponse.toXML());
 
