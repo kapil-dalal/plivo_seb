@@ -132,11 +132,35 @@ router.all('/confrence_callback/', function (request, response) {
             // urls: "https://s3.amazonaws.com/plivocloud/music.mp3",
             // length: 120,
          };
-         console.log('after 20 second to transfer the call: ', params);
-         p.transfer_call(params, function (status, response) {
-            console.log('transfer_call Status: ', status);
-            console.log('transfer_call API Response:\n', response);
-        });
+         // var d = {
+         //    Direction: 'inbound',
+         //    From: 'sip:kapilmakecall170208155025@phone.plivo.com',
+         //    ConferenceMemberID: '8398',
+         //    CallerName: 'kapilmakecall170208155025',
+         //    ConferenceName: 'demo',
+         //    ConferenceAction: 'enter',
+         //    BillRate: '0.003',
+         //    To: 'sip:kapilagent1170208155150@phone.plivo.com',
+         //    ConferenceUUID: 'f0a7239c-f92a-11e6-87d6-d3f6ab578519',
+         //    CallUUID: 'e7d6125a-f92a-11e6-85a7-d3f6ab578519',
+         //    CallStatus: 'in-progress',
+         //    Event: 'ConferenceEnter',
+         //    ConferenceFirstMember: 'true'
+         // }
+
+
+         var getConParm = {
+            conference_id: data.ConferenceUUID
+         }
+         console.log('after 20 second to transfer the call getConParm: ', getConParm);
+         p.get_live_conference(getConParm, , function (status, response) {
+            console.log('get_live_conference Status: ', status);
+            console.log('get_live_conference API Response:\n', response);
+         })
+         // p.transfer_call(params, function (status, response) {
+         //    console.log('transfer_call Status: ', status);
+         //    console.log('transfer_call API Response:\n', response);
+         // });
       }, 20000);
    }
 });
