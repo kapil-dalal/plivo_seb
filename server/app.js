@@ -35,8 +35,8 @@ app.listen(3000, function () {
    console.log('Node app is running on port', 3000);
 });
 
-var dbService = require('./db/db.service');
-dbService.createDB();
+// var dbService = require('./db/db.service');
+// dbService.createDB();
 
 var plivo = require('plivo');
 // var p = plivo.RestAPI({
