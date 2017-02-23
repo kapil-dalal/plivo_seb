@@ -154,7 +154,7 @@ function createDB() {
             if (err.code == ER_TABLE_EXISTS_ERROR) {
                writeLog("'" + tablesNameList[i] + "' table already exists");
             } else {
-               // writeLog("error while create table '" + tablesNameList[i] + "': ", err);
+               writeLog("error while create table '" + tablesNameList[i] + "': ", err);
             }
          } else {
             //writeLog("result of create table '" + allTables[i] + "': ", result);

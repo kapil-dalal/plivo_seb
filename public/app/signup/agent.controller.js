@@ -1,5 +1,5 @@
-app.controller('signupAgentController', ["$scope", 'httpService',
-   function ($scope, httpService) {
+app.controller('signupAgentController', ["$scope", '$state', 'httpService',
+   function ($scope, $state, httpService) {
       console.log('signupAgentController called');
 
       $scope.name = '';
