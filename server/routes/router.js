@@ -54,8 +54,24 @@ router.get('/receive_call/', function (request, response) {
       'length': "1"
    };
    r.addWait(params_wait);
+
+
+   var plivoResponse = plivo.Response();
+   plivoResponse.addSpeak("Thanks for calling. Please wait.");
+   var params = {
+      callbackUrl: request.protocol + '://' + request.headers.host + "/confrence_callback/",
+      callbackMethod: "GET",
+      waitSound: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/"
+   };
+
+   var conference_name = "My Conf"; // Conference Room name
+   plivoResponse.addConference(conference_name, params);
+   console.log(plivoResponse.toXML());
+
+   // cb(plivoResponse.toXML());
+
    response.set({ 'Content-Type': 'text/xml' });
-   response.end(r.toXML());
+   response.end(plivoResponse.toXML());
 });
 
 router.all('/user_selection/:to', function (request, response) {
