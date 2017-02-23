@@ -51,10 +51,11 @@ router.get('/receive_customer_call/', function (request, response) {
          console.log('call is forwarding: ', agentDetail);
          if (agentDetail) {
             r.addSpeak(speakForward);
-            var d = r.addDial({ dialMusic: PLIVO_SONG });
+            var params = {
+               dialMusic: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/"
+            }
+            var d = r.addDial(params);
             d.addUser(agentDetail[constants.SCHEMA_AGENTS.SIP]);
-            // d.addPlay(PLIVO_SONG);
-            // r.addPlay(PLIVO_SONG);
             console.log('forward call xml: ', r.toXML());
          } else {
             r.addSpeak(speakBusy);
