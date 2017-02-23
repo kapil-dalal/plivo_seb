@@ -51,6 +51,7 @@ router.get('/receive_customer_call/', function (request, response) {
          console.log('call is forwarding: ', agentDetail);
          if (agentDetail) {
             r.addSpeak(speakForward);
+            r.addPlay(PLIVO_SONG);
             var d = r.addDial();
             d.addUser(agentDetail[constants.SCHEMA_AGENTS.SIP]);
             console.log('forward call xml: ', r.toXML());
