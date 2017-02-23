@@ -53,7 +53,8 @@ router.get('/receive_customer_call/', function (request, response) {
             r.addSpeak(speakForward);
             var d = r.addDial();
             d.addUser(agentDetail[constants.SCHEMA_AGENTS.SIP]);
-            r.addPlay(PLIVO_SONG);
+            d.addPlay(PLIVO_SONG);
+            // r.addPlay(PLIVO_SONG);
             console.log('forward call xml: ', r.toXML());
          } else {
             r.addSpeak(speakBusy);
