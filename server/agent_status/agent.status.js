@@ -9,7 +9,7 @@ function getFreeAgent(cb) {
    };
    dbService.query(agentStatusQuery, function (err, agetntStatusResult) {
       if (err) {
-         response.status(500).send(err);
+         cb(err);
          return;
       }
       if (agetntStatusResult && agetntStatusResult.length > 0) {
@@ -20,15 +20,15 @@ function getFreeAgent(cb) {
          };
          dbService.query(agentQuery, function (err, agetntResult) {
             if (err) {
-               response.status(500).send(err);
+               cb(err);
                return;
             }
             if (cb)
-               cb(agetntResult[0]);
+               cb(null, agetntResult[0]);
          });
       } else {
          if (cb)
-            cb(null);
+            cb();
       }
 
    });

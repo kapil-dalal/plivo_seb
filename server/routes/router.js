@@ -37,24 +37,31 @@ router.get('/make_call', function (req, res) {
 
 router.get('/receive_customer_call/', function (request, response) {
    console.log('receive_customer_call');
+
    var speakBusy = "All lines are busy. Please call after some time.";
    var speakForward = "Thanks for calling. We are forwarding call to our customer care support.";
+   var speakError = "error got";
 
-   agentStatus.getFreeAgent(function (agentDetail) {
+   agentStatus.getFreeAgent(function (err, agentDetail) {
       var r = plivo.Response();
-      console.log('call is forwarding: ', agentDetail);
-      if (agentDetail) {
-         r.addSpeak(speakForward);
-         var d = r.addDial();
-         d.addUser(agentDetail[constants.SCHEMA_AGENTS.SIP]);
-         console.log('forward call xml: ', r.toXML());
+      if (err) {
+         console.log('get free agent error: ', err);
+         r.addSpeak(speakError);
       } else {
-         r.addSpeak(speakBusy);
+         console.log('call is forwarding: ', agentDetail);
+         if (agentDetail) {
+            r.addSpeak(speakForward);
+            var d = r.addDial();
+            d.addUser(agentDetail[constants.SCHEMA_AGENTS.SIP]);
+            console.log('forward call xml: ', r.toXML());
+         } else {
+            r.addSpeak(speakBusy);
+         }
       }
-      res.set({
+      response.set({
          'Content-Type': 'text/xml'
       });
-      res.end(r.toXML());
+      response.end(r.toXML());
    })
 });
 
