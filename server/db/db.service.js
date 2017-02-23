@@ -7,23 +7,20 @@ var ER_TABLE_EXISTS_ERROR = "ER_TABLE_EXISTS_ERROR";
 /* GET home page. */
 
 var sqlConfig = {
-   //host: "192.168.100.132",
-   host: "localhost",
-   //port: "8888",
+   host: "plivotest.csa6sdoa57s6.us-west-2.rds.amazonaws.com",
    port: "3306",
    user: "root",
-   //password: "root",
-   password: "",
-   database: "test_kd"
-};
-
-sqlConfig = {
-   host: "localhost",
-   port: "3306",
-   user: "root",
-   password: "root",
+   password: "root1234",
    database: "plivo_test"
 };
+
+// sqlConfig = {
+//    host: "localhost",
+//    port: "3306",
+//    user: "root",
+//    password: "root",
+//    database: "plivo_test"
+// };
 
 function createDB() {
    var USER_STATUS = "CREATE TABLE IF NOT EXISTS user_status"
