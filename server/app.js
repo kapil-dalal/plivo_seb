@@ -44,10 +44,10 @@ var p = plivo.RestAPI({
    authToken: 'MzhlYjBhOGExNGQ0NzI0ZDY4YjFkOWM4MzEwNjI3'
 });
 
-p.get_live_conferences({}, function (status, response) {
-   console.log('get_live_conference Status: ', status);
-   console.log('get_live_conference API Response:\n', response);
-})
+// p.get_live_conferences({}, function (status, response) {
+//    console.log('get_live_conference Status: ', status);
+//    console.log('get_live_conference API Response:\n', response);
+// })
 
 // var params = {
 //     'endpoint_id': '77815552817411' // ID of the endpoint for which the details have to be retrieved
