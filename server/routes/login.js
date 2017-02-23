@@ -1,5 +1,6 @@
 var express = require('express');
 var dbService = require('../db/db.service');
+var agentStatus = require('../agent_status/agent.status');
 var constants = require('../constants');
 var router = express.Router();
 
@@ -9,7 +10,7 @@ router.post('/login', function (request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
    var user_name = data.user_name;
    var password = data.password;
-   var query = { $table: 'users', $filter: "user_name = '" + user_name + "' and password = '" + password + "'" };
+   var query = { $table: constants.SCHEMA_NAMES.USERS, $filter: constants.SCHEMA_USERS.USER_NAME + " = '" + user_name + "' and " + constants.SCHEMA_USERS.PASSWORD + " = '" + password + "'" };
    dbService.query(query, function (err, result) {
       if (err) {
          response.status(500).send(err);
@@ -17,7 +18,7 @@ router.post('/login', function (request, response) {
       }
       result = result[0];
       if (result && result.status_id == constants.USER_STATUS.ACTIVE) {
-         var agentQuery = { $table: 'agents', $filter: "user_id = '" + result.id + "'" };
+         var agentQuery = { $table: constants.SCHEMA_NAMES.AGENTS, $filter: constants.SCHEMA_AGENTS.USER_ID + " = '" + result.id + "'" };
          dbService.query(agentQuery, function (err, agetntResult) {
             if (err) {
                response.status(500).send(err);
@@ -25,6 +26,11 @@ router.post('/login', function (request, response) {
             }
             agetntResult = agetntResult[0];
             response.send(JSON.stringify(agetntResult));
+
+            // TODO: this work should do with websockets
+            agentStatus.updateAgentStatusagentDetails(agetntResult, constants.AGENT_STATUS_TYPE.FREE, function () {
+
+            });
          });
       } else if (result && result.status_id == constants.USER_STATUS.INACTIVE) {
          response.status(500).send(JSON.stringify({ code: 'INACTIVE', message: 'account is inactive.' }));

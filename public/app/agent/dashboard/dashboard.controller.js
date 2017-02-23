@@ -29,7 +29,7 @@ app.controller('dashboardController', ["$rootScope", "$scope", "$state", "httpSe
          $scope.statusTxt = 'Login';
          $scope.loginBox = true;
          // uncomment for production and make call
-         // login();
+         login();
       }
 
       $scope.user1 = function () {

@@ -1,4 +1,6 @@
 var express = require('express');
+var agentStatus = require('../agent_status/agent.status');
+var constants = require('../constants');
 var router = express.Router();
 
 module.exports = router;
@@ -33,27 +35,50 @@ router.get('/make_call', function (req, res) {
 
 });
 
-router.get('/receive_call/', function (request, response) {
-   console.log('request: ', request.query);
-   var data = request.query;
+router.get('/receive_customer_call/', function (request, response) {
+   console.log('receive_customer_call');
+   var speakBusy = "All lines are busy. Please call after some time.";
+   var speakForward = "Thanks for calling. We are forwarding call to our customer care support.";
 
-   var r = plivo.Response();
-   var getdigits_action_url, params, getDigits;
-   getdigits_action_url = request.protocol + '://' + request.headers.host + '/user_selection/' + data.To;
-   params = {
-      'action': getdigits_action_url,
-      'method': 'POST',
-      'timeout': '7',
-      'numDigits': '1',
-      'retries': '1'
-   };
-   getDigits = r.addGetDigits(params);
-   getDigits.addSpeak(IVR_MESSAGE1);
-   r.addSpeak(NO_INPUT_MESSAGE);
-   params_wait = {
-      'length': "1"
-   };
-   r.addWait(params_wait);
+   agentStatus.getFreeAgent(function (agentDetail) {
+      var r = plivo.Response();
+      console.log('call is forwarding: ', agentDetail);
+      if (agentDetail) {
+         r.addSpeak(speakForward);
+         var d = r.addDial();
+         d.addUser(agentDetail[constants.SCHEMA_AGENTS.SIP]);
+         console.log('forward call xml: ', r.toXML());
+      } else {
+         r.addSpeak(speakBusy);
+      }
+      res.set({
+         'Content-Type': 'text/xml'
+      });
+      res.end(r.toXML());
+   })
+});
+
+router.get('/receive_call/', function (request, response) {
+   // console.log('request: ', request.query);
+   // var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
+
+   // var r = plivo.Response();
+   // var getdigits_action_url, params, getDigits;
+   // getdigits_action_url = request.protocol + '://' + request.headers.host + '/user_selection/' + data.To;
+   // params = {
+   //    'action': getdigits_action_url,
+   //    'method': 'POST',
+   //    'timeout': '7',
+   //    'numDigits': '1',
+   //    'retries': '1'
+   // };
+   // getDigits = r.addGetDigits(params);
+   // getDigits.addSpeak(IVR_MESSAGE1);
+   // r.addSpeak(NO_INPUT_MESSAGE);
+   // params_wait = {
+   //    'length': "1"
+   // };
+   // r.addWait(params_wait);
 
 
    var plivoResponse = plivo.Response();

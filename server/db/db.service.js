@@ -26,7 +26,7 @@ sqlConfig = {
 };
 
 function createDB() {
-   var STATUS = "CREATE TABLE IF NOT EXISTS user_status"
+   var USER_STATUS = "CREATE TABLE IF NOT EXISTS user_status"
       + " ( "
       + " id INT NOT NULL AUTO_INCREMENT UNIQUE, "
       + " name VARCHAR(100) NOT NULL UNIQUE, "
@@ -38,6 +38,25 @@ function createDB() {
       + " id INT NOT NULL AUTO_INCREMENT UNIQUE, "
       + " name VARCHAR(100) NOT NULL UNIQUE, "
       + " PRIMARY KEY (id) "
+      + " );";
+
+   var AGENT_STATUS_TYPES = "CREATE TABLE IF NOT EXISTS agent_status_types"
+      + " ( "
+      + " id INT NOT NULL AUTO_INCREMENT UNIQUE, "
+      + " name VARCHAR(100) NOT NULL UNIQUE "
+      + " );";
+
+   var AGENT_STATUS = "CREATE TABLE IF NOT EXISTS agent_status"
+      + " ( "
+      + " id INT NOT NULL AUTO_INCREMENT UNIQUE, "
+      + " agent_id INT NOT NULL, "
+      + " user_id INT NOT NULL, "
+      + " status_id INT NOT NULL, "
+      + " call_count INT, "
+      + " PRIMARY KEY (id), "
+      + " FOREIGN KEY (agent_id) REFERENCES agents(id) ON DELETE NO ACTION ON UPDATE NO ACTION, "
+      + " FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION, "
+      + " FOREIGN KEY (status_id) REFERENCES agent_status_types(id) ON DELETE NO ACTION ON UPDATE NO ACTION "
       + " );";
 
    var USERS = "CREATE TABLE IF NOT EXISTS users"
@@ -59,7 +78,7 @@ function createDB() {
       + " ( "
       + " id INT NOT NULL AUTO_INCREMENT, "
       + " name VARCHAR(100) NOT NULL, "
-      + " email_id VARCHAR(100) NOT NULL UNIQUE, "
+      + " email_id VARCHAR(100) NOT NULL, "
       + " phone_number VARCHAR(100), "
       + " sip VARCHAR(100), "
       + " sip_id VARCHAR(100), "
@@ -81,20 +100,39 @@ function createDB() {
    var USER_TYPE_DATA_1 = "INSERT INTO user_types(id, name) values(1, 'Customer')";
    var USER_TYPE_DATA_2 = "INSERT INTO user_types(id, name) values(2, 'Agent')";
 
+   var AGENT_STATUS_TYPE_1 = "INSERT INTO agent_status_types(id, name) values(1, 'Free')";
+   var AGENT_STATUS_TYPE_2 = "INSERT INTO agent_status_types(id, name) values(2, 'Engaged')";
+   var AGENT_STATUS_TYPE_3 = "INSERT INTO agent_status_types(id, name) values(3, 'OffLine')";
+
    var allTables = [
-      STATUS,
+      USER_STATUS,
       USER_TYPES,
+      AGENT_STATUS_TYPES,
+      AGENT_STATUS,
       USERS,
       AGENTS,
       USER_STATUS_DATA_1,
       USER_STATUS_DATA_2,
       USER_TYPE_DATA_1,
-      USER_TYPE_DATA_2
+      USER_TYPE_DATA_2,
+      AGENT_STATUS_TYPE_1,
+      AGENT_STATUS_TYPE_2,
+      AGENT_STATUS_TYPE_3
    ];
-   var tablesNameList = ["user_status", "user_types", "users",
-      "agents", 'USER_STATUS_DATA_1', 'USER_STATUS_DATA_2',
+   var tablesNameList = [
+      "user_status",
+      "user_types",
+      "agent_status_types",
+      "agent_status",
+      "users",
+      "agents",
+      'USER_STATUS_DATA_1',
+      'USER_STATUS_DATA_2',
       'USER_TYPE_DATA_1',
-      'USER_TYPE_DATA_2'
+      'USER_TYPE_DATA_2',
+      'AGENT_STATUS_TYPE_1',
+      'AGENT_STATUS_TYPE_2',
+      'AGENT_STATUS_TYPE_3'
    ];
 
    try {
@@ -119,7 +157,7 @@ function createDB() {
             if (err.code == ER_TABLE_EXISTS_ERROR) {
                writeLog("'" + tablesNameList[i] + "' table already exists");
             } else {
-               //writeLog("error while create table '" + tablesNameList[i] + "': ", err);
+               // writeLog("error while create table '" + tablesNameList[i] + "': ", err);
             }
          } else {
             //writeLog("result of create table '" + allTables[i] + "': ", result);
@@ -175,10 +213,12 @@ function query(queryObj, callback) {
                columns += (fields[i] && fields[i].length > 0 ? fields[i] : "");
             }
          }
+         var limit = queryObj.$limit ? " limit " + queryObj.$limit : '';
          var actualQuery = "select " + columns + " from " + tableName;
          if (filter && filter.length > 0) {
             actualQuery += " WHERE " + filter;
          }
+         actualQuery += limit
          writeLog("actualQuery: " + actualQuery);
          sqlConnection.query(actualQuery, function (err, rows) {
             sqlConnection.end();
@@ -290,7 +330,7 @@ function insert(updates, callback) {
 }
 
 // sample data to insert
-// [{ $table: 'tab', $update: { column1: 'value1' } }]
+// [{ $table: 'tab', $update: { column1: 'value1' }, $filter: '' }]
 function update(updates, callback) {
    if (!updates) {
       return;
@@ -368,7 +408,11 @@ function writeLog(log1, log2) {
 //    writeLog('insert comp');
 // });
 
-// var qu = { $table: 'tab', $fields: ['col1', 'col2'], $filter: 'col3="fildata"' };
+// var qu = {
+//    $table: 'tab', $fields: ['col1', 'col2'], $filter: 'col3="fildata"',
+//    $limit: 1,
+//    // $orderby: 'id', $ordertype: 'desc'
+// };
 // query(qu, function () {
 //    writeLog('query comp');
 // });
