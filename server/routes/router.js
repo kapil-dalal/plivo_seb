@@ -101,7 +101,7 @@ function outboundCall(request, response) {
    var errorMsg = "Something happen wrong. please try after some time";
    var connectingMessage = "connecting your call.";
    try {
-      var query = { $table: constants.SCHEMA_NAMES.AGENTS, $filter: constants.SCHEMA_USERS.SIP + ' = "' + from + '"' };
+      var query = { $table: constants.SCHEMA_NAMES.AGENTS, $filter: constants.SCHEMA_AGENTS.SIP + ' = "' + from + '"' };
       dbService.query(query, function (err, result) {
          if (err) {
             r.addSpeak(errorMsg);
