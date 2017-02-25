@@ -91,7 +91,7 @@ router.all('/hangup_customer_call/', function (request, response) {
 
    var agentStatusUpdate = {}
    agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.STATUS_ID] = constants.AGENT_STATUS_TYPE.FREE;
-   agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.CALL_UUID] = undefined;
+   agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.CALL_UUID] = null;
    var updates = [
       {
          $table: constants.SCHEMA_NAMES.AGENT_STATUS,
