@@ -73,6 +73,8 @@ var SCHEMA_AGENTS = {
    STATUS_ID: 'status_id',
 }
 
+var TO_SIP = "sip:kapilagent1170208155150@phone.plivo.com"
+
 module.exports.USER_TYPES = USER_TYPES;
 module.exports.USER_STATUS = USER_STATUS;
 module.exports.AGENT_STATUS_TYPE = AGENT_STATUS_TYPE;
@@ -84,3 +86,4 @@ module.exports.SCHEMA_AGENT_STATUS_TYPES = SCHEMA_AGENT_STATUS_TYPES;
 module.exports.SCHEMA_AGENT_STATUS = SCHEMA_AGENT_STATUS;
 module.exports.SCHEMA_USERS = SCHEMA_USERS;
 module.exports.SCHEMA_AGENTS = SCHEMA_AGENTS;
+module.exports.TO_SIP = TO_SIP;

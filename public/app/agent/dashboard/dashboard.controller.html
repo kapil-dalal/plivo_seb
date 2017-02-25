@@ -18,25 +18,8 @@
             <span class="label" id="status_txt">{{statusTxt}}</span><br/><br/>
 
 
-            <form id="login_box" ng-hide="true" title="Login">
-               <label>Username</label>
-               <input type="text" ng-model="userName" value="" id="username">
-
-               <br/>
-
-               <label>Password</label>
-               <input type="password" ng-model="password" value="" id="password">
-
-               <br/>
-
-            </form>
-            <!--<input class="btn" type="button" id="btn_login" ng-show="loginButton" ng-click="login()" value="Login">-->
-
-            <!--<input class="btn" type="button" ng-show="loginButton" ng-click="user1()" value="User 1">
-            <input class="btn" type="button" ng-show="loginButton" ng-click="user2()" value="user 2">-->
-
             <form id="callcontainer" ng-show="callContainerBox" style="display: block">
-               <input type="text" name="to" id="to" ng-model="sip" ng-hide="true" placeholder="Phone number or a SIP URI">
+               <input type="text" name="to" id="to" ng-model="sip" placeholder="Phone number or a SIP URI">
                <br/>
                <a href="#" id="make_call" class="btn main-btn btn-success" ng-click="call();">{{makeCallTxt}}</a>
 

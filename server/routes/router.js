@@ -39,6 +39,103 @@ router.get('/make_call', function (req, res) {
 router.all('/receive_customer_call/', function (request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
    console.log('receive_customer_call: ', data);
+   var to = data.To;
+   if (to === constants.TO_SIP) {
+      inboundCall(request, response);
+   } else {
+      outboundCall(request, response);
+   }
+
+});
+
+function inboundCall(request, response) {
+   var speakBusy = "All lines are busy. Please call after some time.";
+   var speakForward = "Thanks for calling. We are forwarding call to our customer care support.";
+   var speakError = "error got";
+   try {
+      var r = plivo.Response();
+      agentStatus.getFreeAgent(function (err, agentDetail) {
+         if (err) {
+            console.log('get free agent error: ', err);
+            r.addSpeak(speakError);
+            sendResponse(response, r);
+         } else {
+            if (agentDetail) {
+               agentStatus.updateAgentStatusagentDetails(agentDetail[constants.SCHEMA_AGENTS.ID], constants.AGENT_STATUS_TYPE.ENGAGED, data.CallUUID, function () {
+                  if (err) {
+                     console.log('get free agent error: ', err);
+                     r.addSpeak(speakError);
+                     sendResponse(response, r);
+                  } else {
+                     console.log('call is forwarding: ', agentDetail);
+
+                     r.addSpeak(speakForward);
+                     var params = {
+                        dialMusic: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/"
+                     }
+                     var d = r.addDial(params);
+                     d.addUser(agentDetail[constants.SCHEMA_AGENTS.SIP]);
+                     console.log('forward call xml: ', r.toXML());
+                     sendResponse(response, r);
+                  }
+               })
+            } else {
+               r.addSpeak(speakBusy);
+               sendResponse(response, r);
+            }
+         }
+      });
+   } catch (err) {
+      console.log('receive_customer_call error: ', err);
+      r.addSpeak(speakError);
+      sendResponse(response, r);
+   }
+}
+
+function outboundCall(request, response) {
+   var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
+   console.log('receive_customer_call: ', data);
+   var from = data.From;
+   var to = data.To;
+   var r = plivo.Response();
+   var errorMsg = "Something happen wrong. please try after some time";
+   var connectingMessage = "connecting your call.";
+   try {
+      var query = { $table: constants.SCHEMA_NAMES.AGENTS, $filter: constants.SCHEMA_USERS.SIP + ' = "' + from + '"' };
+      dbService.query(query, function (err, result) {
+         if (err) {
+            r.addSpeak(errorMsg);
+            sendResponse(response, r);
+            return;
+         }
+         result = result[0];
+         if (result) {
+            var agentStatusUpdate = {}
+            agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.STATUS_ID] = constants.AGENT_STATUS_TYPE.ENGAGED;
+            agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.CALL_UUID] = data.CallUUID;
+            var updates = [
+               {
+                  $table: constants.SCHEMA_NAMES.AGENT_STATUS,
+                  $update: agentStatusUpdate,
+                  $filter: constants.SCHEMA_AGENT_STATUS.AGENT_ID + "='" + data.CallUUID + "'"
+               }
+            ];
+            dbService.update(updates, function (err, result) {
+               r.addSpeak(connectingMessage);
+               sendResponse(response, r);
+            })
+         } else {
+            r.addSpeak(errorMsg);
+            sendResponse(response, r);
+         }
+      });
+   } catch (err) {
+      r.addSpeak(errorMsg);
+      sendResponse(response, r);
+   }
+
+
+
 
    var speakBusy = "All lines are busy. Please call after some time.";
    var speakForward = "Thanks for calling. We are forwarding call to our customer care support.";
@@ -81,7 +178,7 @@ router.all('/receive_customer_call/', function (request, response) {
       r.addSpeak(speakError);
       sendResponse(response, r);
    }
-});
+}
 
 router.all('/hangup_customer_call/', function (request, response) {
    response.end('');
