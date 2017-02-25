@@ -35,38 +35,100 @@ router.get('/make_call', function (req, res) {
 
 });
 
-router.get('/receive_customer_call/', function (request, response) {
+router.all('/receive_customer_call/', function (request, response) {
    console.log('receive_customer_call');
 
    var speakBusy = "All lines are busy. Please call after some time.";
    var speakForward = "Thanks for calling. We are forwarding call to our customer care support.";
    var speakError = "error got";
-
-   agentStatus.getFreeAgent(function (err, agentDetail) {
+   try {
       var r = plivo.Response();
-      if (err) {
-         console.log('get free agent error: ', err);
-         r.addSpeak(speakError);
-      } else {
-         console.log('call is forwarding: ', agentDetail);
-         if (agentDetail) {
-            r.addSpeak(speakForward);
-            var params = {
-               dialMusic: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/"
-            }
-            var d = r.addDial(params);
-            d.addUser(agentDetail[constants.SCHEMA_AGENTS.SIP]);
-            console.log('forward call xml: ', r.toXML());
+      agentStatus.getFreeAgent(function (err, agentDetail) {
+         if (err) {
+            console.log('get free agent error: ', err);
+            r.addSpeak(speakError);
+            sendResponse(response, r);
          } else {
-            r.addSpeak(speakBusy);
+            agentStatus.updateAgentStatusagentDetails(agentDetail[constants.SCHEMA_AGENTS.ID], constants.AGENT_STATUS_TYPE.ENGAGED, function () {
+               if (err) {
+                  console.log('get free agent error: ', err);
+                  r.addSpeak(speakError);
+                  sendResponse(response, r);
+               } else {
+                  console.log('call is forwarding: ', agentDetail);
+                  if (agentDetail) {
+                     r.addSpeak(speakForward);
+                     var params = {
+                        dialMusic: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/"
+                     }
+                     var d = r.addDial(params);
+                     d.addUser(agentDetail[constants.SCHEMA_AGENTS.SIP]);
+                     console.log('forward call xml: ', r.toXML());
+                  } else {
+                     r.addSpeak(speakBusy);
+                  }
+                  sendResponse(response, r);
+               }
+            })
          }
-      }
-      response.set({
-         'Content-Type': 'text/xml'
       });
-      response.end(r.toXML());
-   })
+   } catch (err) {
+      console.log('receive_customer_call error: ', err);
+      r.addSpeak(speakError);
+      sendResponse(response, r);
+   }
 });
+
+router.all('/hangup_customer_call/', function (request, response) {
+   console.log('hangup_customer_call: ', request);
+   response.end('');
+   // var speakBusy = "All lines are busy. Please call after some time.";
+   // var speakForward = "Thanks for calling. We are forwarding call to our customer care support.";
+   // var speakError = "error got";
+   // try {
+   //    var r = plivo.Response();
+   //    agentStatus.getFreeAgent(function (err, agentDetail) {
+   //       if (err) {
+   //          console.log('get free agent error: ', err);
+   //          r.addSpeak(speakError);
+   //          sendResponse(response, r);
+   //       } else {
+   //          agentStatus.updateAgentStatusagentDetails(connection.userId, constants.AGENT_STATUS_TYPE.ENGAGED, function () {
+   //             if (err) {
+   //                console.log('get free agent error: ', err);
+   //                r.addSpeak(speakError);
+   //                sendResponse(response, r);
+   //             } else {
+   //                console.log('call is forwarding: ', agentDetail);
+   //                if (agentDetail) {
+   //                   r.addSpeak(speakForward);
+   //                   var params = {
+   //                      dialMusic: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/"
+   //                   }
+   //                   var d = r.addDial(params);
+   //                   d.addUser(agentDetail[constants.SCHEMA_AGENTS.SIP]);
+   //                   console.log('forward call xml: ', r.toXML());
+   //                } else {
+   //                   r.addSpeak(speakBusy);
+   //                }
+   //                sendResponse(response, r);
+   //             }
+   //          })
+   //       }
+   //    });
+   // } catch (err) {
+   //    console.log('receive_customer_call error: ', err);
+   //    r.addSpeak(speakError);
+   //    sendResponse(response, r);
+   // }
+});
+
+function sendResponse(response, r) {
+   response.set({
+      'Content-Type': 'text/xml'
+   });
+   response.end(r.toXML());
+}
 
 router.get('/receive_call/', function (request, response) {
    // console.log('request: ', request.query);

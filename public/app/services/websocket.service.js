@@ -2,7 +2,7 @@ app.factory('websocketService', ['$websocket', function ($websocket) {
    'use strict';
    // var serverURI = "ws://192.168.43.15:3000";
    // require https socket connection
-   var serverURI = "wss://localhost:444";
+   var serverURI = "wss://localhost:3010";
    var socket = null;
    var retryConnectTime = 5 * 1000; // one second
    function sendMessage(data) {

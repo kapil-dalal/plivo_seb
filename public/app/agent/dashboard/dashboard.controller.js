@@ -1,9 +1,9 @@
-app.controller('dashboardController', ["$rootScope", "$scope", "$state", "httpService",
-   function ($rootScope, $scope, $state, httpService) {
+app.controller('dashboardController', ['websocketService', "$rootScope", "$scope", "$state", "httpService",
+   function (websocketService, $rootScope, $scope, $state, httpService) {
       if (!$rootScope.agentDetails) {
          $rootScope.agentDetails = sessionStorage.agentDetails ? JSON.parse(sessionStorage.agentDetails) : undefined;
       }
-      var agentDetails = $rootScope.agentDetails;
+      var agentDetails = $rootScope.agentDetails || {};
       console.log('dashboardController called: ', agentDetails);
 
 
@@ -264,8 +264,24 @@ app.controller('dashboardController', ["$rootScope", "$scope", "$state", "httpSe
          Plivo.onIncomingCall = onIncomingCall;
          Plivo.onIncomingCallCanceled = onIncomingCallCanceled;
          Plivo.init();
+
+         websocketService.createConnection(
+            function (message) {
+               console.log('socket message: ', message);
+            },
+            function (socketState) {
+               console.log('socket socketState: ', socketState);
+               if (socketState) {
+                  websocketService.sendMessage({ type: 'login', from: agentDetails.id })
+               }
+            }
+         );
       }
 
-      initPlivo();
+      if (agentDetails.id) {
+         initPlivo();
+      } else {
+         $state.go('login');
+      }
 
    }]);

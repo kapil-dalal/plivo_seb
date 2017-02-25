@@ -1,6 +1,5 @@
 var express = require('express');
 var dbService = require('../db/db.service');
-var agentStatus = require('../agent_status/agent.status');
 var constants = require('../constants');
 var router = express.Router();
 
@@ -26,11 +25,6 @@ router.post('/login', function (request, response) {
             }
             agetntResult = agetntResult[0];
             response.send(JSON.stringify(agetntResult));
-
-            // TODO: this work should do with websockets
-            agentStatus.updateAgentStatusagentDetails(agetntResult, constants.AGENT_STATUS_TYPE.FREE, function () {
-
-            });
          });
       } else if (result && result.status_id == constants.USER_STATUS.INACTIVE) {
          response.status(500).send(JSON.stringify({ code: 'INACTIVE', message: 'account is inactive.' }));

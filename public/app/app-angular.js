@@ -1,6 +1,6 @@
 var app = angular.module('plivo', [
    'ui.router',
-   //  'ngWebSocket'
+   'ngWebSocket'
 ]);
 
 app.config(function ($stateProvider, $urlRouterProvider) {
@@ -9,12 +9,17 @@ app.config(function ($stateProvider, $urlRouterProvider) {
    $urlRouterProvider.otherwise("/home");
 
    $stateProvider
+      .state('login', {
+         url: '/login',
+         templateUrl: 'app/login/login.controller.html',
+         controller: 'loginController'
+      })
       .state('home', {
          url: '/home',
          templateUrl: 'app/home/home.controller.html',
          controller: 'homeController'
       })
-      .state('contact_us', {
+      .state('home.contact_us', {
          url: '/contact_us',
          templateUrl: 'app/contact/contact.controller.html',
          controller: 'contactController'
@@ -24,16 +29,17 @@ app.config(function ($stateProvider, $urlRouterProvider) {
          templateUrl: 'app/signup/agent.controller.html',
          controller: 'signupAgentController'
       })
-      .state('login', {
-         url: '/login',
-         templateUrl: 'app/login/login.controller.html',
-         controller: 'loginController'
-      })
       .state('dashboard', {
          url: '/dashboard',
          templateUrl: 'app/agent/dashboard/dashboard.controller.html',
          controller: 'dashboardController'
-      });
+      })
+      // .state('dashboard.contacts', {
+      //    url: '/contacts',
+      //    templateUrl: 'app/contact/contact.controller.html',
+      //    controller: 'contactController'
+      // })
+      ;
 }).run(function ($rootScope, $templateCache) {
    $rootScope.$on('$viewContentLoaded', function () {
       console.log('content loaded');

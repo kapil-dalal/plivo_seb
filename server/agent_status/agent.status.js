@@ -34,8 +34,7 @@ function getFreeAgent(cb) {
    });
 }
 
-function updateAgentStatusagentDetails(agentDetails, status, cb) {
-   var agentId = agentDetails[constants.SCHEMA_AGENTS.ID];
+function updateAgentStatusagentDetails(agentId, status, cb) {
    var agentUpdate = {}
    agentUpdate[constants.SCHEMA_AGENT_STATUS.STATUS_ID] = status;
 

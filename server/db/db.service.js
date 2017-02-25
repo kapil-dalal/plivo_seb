@@ -1,26 +1,10 @@
-var mysql = require('mysql');
 
-var sqlConnection = null;
+var sqlSingletonConnection = require('./singleton.sql.connection');
+
 var ER_DUP_ENTRY = "ER_DUP_ENTRY";
 var ER_NO_SUCH_TABLE = "ER_NO_SUCH_TABLE";
 var ER_TABLE_EXISTS_ERROR = "ER_TABLE_EXISTS_ERROR";
 /* GET home page. */
-
-var sqlConfig = {
-   host: "plivotest.csa6sdoa57s6.us-west-2.rds.amazonaws.com",
-   port: "3306",
-   user: "root",
-   password: "root1234",
-   database: "plivo_test"
-};
-
-// sqlConfig = {
-//    host: "localhost",
-//    port: "3306",
-//    user: "root",
-//    password: "root",
-//    database: "plivo_test"
-// };
 
 function createDB() {
    var USER_STATUS = "CREATE TABLE IF NOT EXISTS user_status"
@@ -132,44 +116,37 @@ function createDB() {
       'AGENT_STATUS_TYPE_3'
    ];
 
-   try {
-      sqlConnection = mysql.createConnection(sqlConfig);
-   } catch (err) {
-      writeLog("creating connection err obj: ", err);
-   }
-   var i = 0;
-   sqlConnection.connect(function (err) {
-      if (err) {
+   sqlSingletonConnection.createSqlConnection(
+      function (sqlConnection) {
+         function createTable(i) {
+            sqlConnection.query(allTables[i], function (err, result) {
+               if (err) {
+                  if (err.code == ER_TABLE_EXISTS_ERROR) {
+                     writeLog("'" + tablesNameList[i] + "' table already exists");
+                  } else {
+                     writeLog("error while create table '" + tablesNameList[i] + "': ", err);
+                  }
+               } else {
+                  //writeLog("result of create table '" + allTables[i] + "': ", result);
+               }
+               createNest(i);
+            });
+         }
+         function createNest(i) {
+            i++;
+            if (i < allTables.length) {
+               createTable(i);
+            }
+         }
+
+         createTable(0);
+      },
+      function (err) {
          writeLog("connection err str: " + err);
          writeLog("connection err obj: ", err);
          throw new Error("Can not Connect To Database");
-      } else {
-         createTable(i);
       }
-   });
-
-   function createTable(i) {
-      sqlConnection.query(allTables[i], function (err, result) {
-         if (err) {
-            if (err.code == ER_TABLE_EXISTS_ERROR) {
-               writeLog("'" + tablesNameList[i] + "' table already exists");
-            } else {
-               writeLog("error while create table '" + tablesNameList[i] + "': ", err);
-            }
-         } else {
-            //writeLog("result of create table '" + allTables[i] + "': ", result);
-         }
-         createNest();
-      });
-   }
-   function createNest() {
-      i++;
-      if (i < allTables.length) {
-         createTable(i);
-      } else {
-         sqlConnection.end();
-      }
-   }
+   );
 }
 
 // sample data to query
@@ -180,19 +157,8 @@ function query(queryObj, callback) {
       return;
    }
 
-   var i = 0;
-   try {
-      sqlConnection = mysql.createConnection(sqlConfig);
-
-   } catch (err) {
-      writeLog("creating connection err obj: ", err);
-      callback(err);
-   }
-   sqlConnection.connect(function (err) {
-      if (err) {
-         writeLog("connection err obj: ", err);
-         callback(err);
-      } else {
+   sqlSingletonConnection.createSqlConnection(
+      function (sqlConnection) {
          var tableName = queryObj.$table;
          var fields = queryObj.$fields || [];
          var filter = queryObj.$filter;
@@ -218,7 +184,6 @@ function query(queryObj, callback) {
          actualQuery += limit
          writeLog("actualQuery: " + actualQuery);
          sqlConnection.query(actualQuery, function (err, rows) {
-            sqlConnection.end();
             if (err) {
                if (callback) {
                   callback(err)
@@ -229,8 +194,12 @@ function query(queryObj, callback) {
                }
             }
          });
+      },
+      function (err) {
+         writeLog("connection err obj: ", err);
+         callback(err);
       }
-   });
+   );
 }
 
 // sample data to insert
@@ -244,18 +213,8 @@ function insert(updates, callback) {
       updates = [updates];
    }
    writeLog("coming updates: ", updates);
-   var i = 0;
-   try {
-      sqlConnection = mysql.createConnection(sqlConfig);
-
-   } catch (err) {
-      writeLog("creating connection err obj: ", err);
-   }
-   sqlConnection.connect(function (err) {
-      if (err) {
-         writeLog("connection err obj: ", err);
-         callback(err);
-      } else {
+   sqlSingletonConnection.createSqlConnection(
+      function (sqlConnection) {
          function insertDataArray(i) {
             var insertObject = updates[i];
             var tableName = insertObject.$table;
@@ -267,7 +226,6 @@ function insert(updates, callback) {
             var j = 0;
 
             function insertActualValues(j) {
-
                var insertValueObject = insertValues[j];
                var columns = "";
                var values = "";
@@ -287,7 +245,6 @@ function insert(updates, callback) {
                writeLog("calling insert in table: '" + tableName + "' with: " + insert);
                sqlConnection.query(insert, function (err, result) {
                   if (err) {
-                     sqlConnection.end();
                      if (callback) {
                         err.tableName = tableName;
                         callback(err);
@@ -308,7 +265,6 @@ function insert(updates, callback) {
                         if (i < updates.length) {
                            insertDataArray(i);
                         } else {
-                           sqlConnection.end();
                            if (callback) {
                               callback(null, finalResult);
                            }
@@ -317,13 +273,16 @@ function insert(updates, callback) {
                   }
                });
             }
-
             insertActualValues(j);
          }
 
-         insertDataArray(i);
+         insertDataArray(0);
+      },
+      function (err) {
+         writeLog("creating connection err obj: ", err);
+         callback(err);
       }
-   });
+   );
 }
 
 // sample data to insert
@@ -337,18 +296,8 @@ function update(updates, callback) {
       updates = [updates];
    }
    writeLog("coming updates: ", updates);
-   var i = 0;
-   try {
-      sqlConnection = mysql.createConnection(sqlConfig);
-
-   } catch (err) {
-      writeLog("creating connection err obj: ", err);
-   }
-   sqlConnection.connect(function (err) {
-      if (err) {
-         writeLog("connection err obj: ", err);
-         callback(err);
-      } else {
+   sqlSingletonConnection.createSqlConnection(
+      function (sqlConnection) {
          function updateDataArray(i) {
             var updateObject = updates[i];
             var tableName = updateObject.$table;
@@ -371,19 +320,16 @@ function update(updates, callback) {
             writeLog("calling updateQuery in table: '" + tableName + "' with: " + updateQuery);
             sqlConnection.query(updateQuery, function (err, result) {
                if (err) {
-                  sqlConnection.end();
                   if (callback) {
                      err.tableName = tableName;
                      callback(err);
                   }
                } else {
                   writeLog("result of updating table: '" + tableName + "', result: ", result);
-
                   i++;
                   if (i < updates.length) {
                      updateDataArray(i);
                   } else {
-                     sqlConnection.end();
                      if (callback) {
                         callback(null, { table: tableName, result: result });
                      }
@@ -391,9 +337,13 @@ function update(updates, callback) {
                }
             });
          }
-         updateDataArray(i);
+         updateDataArray(0);
+      },
+      function (err) {
+         writeLog("connection err obj: ", err);
+         callback(err);
       }
-   });
+   );
 }
 
 function writeLog(log1, log2) {

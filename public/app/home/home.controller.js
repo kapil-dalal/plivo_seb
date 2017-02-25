@@ -1,9 +1,10 @@
 app.controller('homeController', ['$scope', '$state',
    function ($scope, $state) {
       console.log('homeController called');
+
       $scope.goToContact = function () {
          console.log('goToContact called');
-         $state.go('contact_us');
+         $state.go('home.contact_us');
       }
 
       $scope.goToSignupAgent = function () {
@@ -15,4 +16,5 @@ app.controller('homeController', ['$scope', '$state',
          console.log('goToLogin called');
          $state.go('login');
       }
+
    }]);

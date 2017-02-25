@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 var path = require('path');
 var fs = require('fs');
 var path = require('path');
+var WebSocketServer = require('websocket').server;
 
 var routes = require('./routes/router');
 var createAgent = require('./routes/create_agent');
@@ -27,16 +28,89 @@ var options = {
    cert: fs.readFileSync(__dirname + '/ssl/cert_new_1.crt', 'utf8')
 };
 
-var httpsNodeServer = https.createServer(options, app).listen(3001, function () {
-   console.log('https server listen on 3001')
+var httpsNodeServer = https.createServer(options, app).listen(3010, function () {
+   console.log('https server listen on 3010')
 });
 
-app.listen(3000, function () {
-   console.log('Node app is running on port', 3000);
+app.listen(3011, function () {
+   console.log('Node app is running on port', 3011);
 });
 
+var wsServer = new WebSocketServer({
+   httpServer: httpsNodeServer
+});
+
+var constants = require('./constants');
+var agentStatus = require('./agent_status/agent.status');
 var dbService = require('./db/db.service');
 dbService.createDB();
+
+var userConnections = {};
+var userConnectionsCounter = {};
+// WebSocket server
+wsServer.on('request', function (request) {
+   console.log('websocket server side request');
+   var connection = request.accept(null, request.origin);
+   // console.log('websocket connection on server: ', connection.socket);
+   // This is the most important callback for us, we'll handle
+   // all messages from users here.
+   connection.on('message', function (message) {
+      console.log('websocket message on server: ', message);
+      if (message.type === 'utf8') {
+         var utfMessage = message.utf8Data;
+         console.log('utfMessage: ' + utfMessage);
+         var jsonData = JSON.parse(utfMessage);
+         var fromUserId = jsonData.from;
+
+         if (jsonData.type == 'login') {
+            console.log('connections for user: ' + fromUserId);
+            connection.userId = fromUserId;
+            userConnections[fromUserId] = connection;
+
+            agentStatus.updateAgentStatusagentDetails(fromUserId, constants.AGENT_STATUS_TYPE.FREE, function () {
+
+            });
+            // var connObject = userConnections[fromUserId];
+            // if (connObject) {
+            //    connection.index = Object.keys(connObject).length;
+            //    userConnections[fromUserId].push(connection);
+            // } else {
+            //    connection.index = 0;
+            //    userConnections[fromUserId] = [connection];
+            // }
+         }
+
+         // var toUserId = jsonData.to;
+         // if (jsonData.type == 'textMessage') {
+         //    var message = jsonData.message;
+         //    console.log('message got: ', message);
+         // }
+
+         // var conn = userConnections[toUserId];
+         // if (conn) {
+         //    conn.send(utfMessage);
+         // }
+      }
+   });
+
+   connection.on('close', function (detailId) {
+      console.log('on connection closed: ', connection.userId);
+      delete userConnections[connection.userId];
+      agentStatus.updateAgentStatusagentDetails(connection.userId, constants.AGENT_STATUS_TYPE.OFF_LINE, function () {
+
+      });
+      if (userConnections && Object.keys(userConnections).length > 0) {
+         // for (var receiver in userConnections) {
+         //    var conn = userConnections[receiver];
+         //    if (conn && conn.userId != connection.userId) {
+         //       var msg = { to: conn.userId, from: connection.userId, type: 'receiverSocketClosed' };
+         //       conn.send(JSON.stringify(msg));
+         //    }
+         // }
+      }
+      // close user connection
+   });
+});
 
 var plivo = require('plivo');
 var p = plivo.RestAPI({
