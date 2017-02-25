@@ -67,7 +67,7 @@ wsServer.on('request', function (request) {
             connection.userId = fromUserId;
             userConnections[fromUserId] = connection;
 
-            agentStatus.updateAgentStatusagentDetails(fromUserId, constants.AGENT_STATUS_TYPE.FREE, function () {
+            agentStatus.updateAgentStatusagentDetails(fromUserId, constants.AGENT_STATUS_TYPE.FREE, null, function () {
 
             });
             // var connObject = userConnections[fromUserId];
@@ -96,7 +96,7 @@ wsServer.on('request', function (request) {
    connection.on('close', function (detailId) {
       console.log('on connection closed: ', connection.userId);
       delete userConnections[connection.userId];
-      agentStatus.updateAgentStatusagentDetails(connection.userId, constants.AGENT_STATUS_TYPE.OFF_LINE, function () {
+      agentStatus.updateAgentStatusagentDetails(connection.userId, constants.AGENT_STATUS_TYPE.OFF_LINE, null, function () {
 
       });
       if (userConnections && Object.keys(userConnections).length > 0) {

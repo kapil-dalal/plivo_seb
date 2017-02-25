@@ -34,6 +34,7 @@ function createDB() {
       + " user_id INT NOT NULL, "
       + " status_id INT NOT NULL, "
       + " call_count INT, "
+      + " call_uuid VARCHAR(200) NOT NULL UNIQUE "
       + " PRIMARY KEY (id), "
       + " FOREIGN KEY (agent_id) REFERENCES agents(id) ON DELETE NO ACTION ON UPDATE NO ACTION, "
       + " FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION, "

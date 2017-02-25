@@ -44,6 +44,7 @@ var SCHEMA_AGENT_STATUS = {
    AGENT_ID: 'agent_id',
    USER_ID: 'user_id',
    STATUS_ID: 'status_id',
+   CALL_UUID: 'call_uuid',
 }
 
 var SCHEMA_USERS = {

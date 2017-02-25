@@ -37,7 +37,8 @@ router.get('/make_call', function (req, res) {
 });
 
 router.all('/receive_customer_call/', function (request, response) {
-   console.log('receive_customer_call');
+   var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
+   console.log('receive_customer_call: ', data);
 
    var speakBusy = "All lines are busy. Please call after some time.";
    var speakForward = "Thanks for calling. We are forwarding call to our customer care support.";
@@ -50,7 +51,7 @@ router.all('/receive_customer_call/', function (request, response) {
             r.addSpeak(speakError);
             sendResponse(response, r);
          } else {
-            agentStatus.updateAgentStatusagentDetails(agentDetail[constants.SCHEMA_AGENTS.ID], constants.AGENT_STATUS_TYPE.ENGAGED, function () {
+            agentStatus.updateAgentStatusagentDetails(agentDetail[constants.SCHEMA_AGENTS.ID], constants.AGENT_STATUS_TYPE.ENGAGED, data.CallUUID, function () {
                if (err) {
                   console.log('get free agent error: ', err);
                   r.addSpeak(speakError);
@@ -85,28 +86,20 @@ router.all('/hangup_customer_call/', function (request, response) {
 
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
    console.log('hangup_customer_call: ', data);
-   var toSip = data.To;
 
-   var agentQuery = { $table: constants.SCHEMA_NAMES.AGENTS, $filter: constants.SCHEMA_AGENTS.SIP + " = '" + toSip + "'" };
-   dbService.query(agentQuery, function (err, agetntResult) {
-      if (err) {
-         return;
-      } else {
-         agetntResult = agetntResult[0];
-         var agentId = agetntResult[constants.SCHEMA_AGENTS.ID];
-         if (agetntResult) {
-            var agentStatusQuery = { $table: constants.SCHEMA_NAMES.AGENT_STATUS, $filter: constants.SCHEMA_AGENT_STATUS.AGENT_ID + " = '" + agentId + "'" };
-            dbService.query(agentStatusQuery, function (err, agetntStatusResult) {
-               agetntStatusResult = agetntStatusResult[0];
-               if (agetntStatusResult && agetntStatusResult[constants.SCHEMA_AGENT_STATUS.STATUS_ID] == constants.AGENT_STATUS_TYPE.ENGAGED) {
-                  agentStatus.updateAgentStatusagentDetails(agentId, constants.AGENT_STATUS_TYPE.FREE, function () {
-
-                  });
-               }
-            });
-         }
+   var agentStatusUpdate = {}
+   agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.STATUS_ID] = constants.AGENT_STATUS_TYPE.FREE;
+   agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.CALL_UUID] = undefined;
+   var updates = [
+      {
+         $table: constants.SCHEMA_NAMES.AGENT_STATUS,
+         $update: agentStatusUpdate,
+         $filter: constants.SCHEMA_AGENT_STATUS.CALL_UUID + "=" + data.CallUUID
       }
-   });
+   ];
+   dbService.update(updates, function (err, result) {
+
+   })
 });
 
 function sendResponse(response, r) {
