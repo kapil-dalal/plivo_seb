@@ -94,7 +94,7 @@ router.all('/hangup_customer_call/', function (request, response) {
       {
          $table: constants.SCHEMA_NAMES.AGENT_STATUS,
          $update: agentStatusUpdate,
-         $filter: constants.SCHEMA_AGENT_STATUS.CALL_UUID + "=" + data.CallUUID
+         $filter: constants.SCHEMA_AGENT_STATUS.CALL_UUID + "='" + data.CallUUID + "'"
       }
    ];
    dbService.update(updates, function (err, result) {
