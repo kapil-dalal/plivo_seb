@@ -133,51 +133,6 @@ function outboundCall(request, response) {
       r.addSpeak(errorMsg);
       sendResponse(response, r);
    }
-
-
-
-
-   var speakBusy = "All lines are busy. Please call after some time.";
-   var speakForward = "Thanks for calling. We are forwarding call to our customer care support.";
-   var speakError = "error got";
-   try {
-      var r = plivo.Response();
-      agentStatus.getFreeAgent(function (err, agentDetail) {
-         if (err) {
-            console.log('get free agent error: ', err);
-            r.addSpeak(speakError);
-            sendResponse(response, r);
-         } else {
-            if (agentDetail) {
-               agentStatus.updateAgentStatusagentDetails(agentDetail[constants.SCHEMA_AGENTS.ID], constants.AGENT_STATUS_TYPE.ENGAGED, data.CallUUID, function () {
-                  if (err) {
-                     console.log('get free agent error: ', err);
-                     r.addSpeak(speakError);
-                     sendResponse(response, r);
-                  } else {
-                     console.log('call is forwarding: ', agentDetail);
-
-                     r.addSpeak(speakForward);
-                     var params = {
-                        dialMusic: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/"
-                     }
-                     var d = r.addDial(params);
-                     d.addUser(agentDetail[constants.SCHEMA_AGENTS.SIP]);
-                     console.log('forward call xml: ', r.toXML());
-                     sendResponse(response, r);
-                  }
-               })
-            } else {
-               r.addSpeak(speakBusy);
-               sendResponse(response, r);
-            }
-         }
-      });
-   } catch (err) {
-      console.log('receive_customer_call error: ', err);
-      r.addSpeak(speakError);
-      sendResponse(response, r);
-   }
 }
 
 router.all('/hangup_customer_call/', function (request, response) {
