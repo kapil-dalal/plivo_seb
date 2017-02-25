@@ -19,8 +19,8 @@ app.config(function ($stateProvider, $urlRouterProvider) {
          templateUrl: 'app/home/home.controller.html',
          controller: 'homeController'
       })
-      .state('home.contact_us', {
-         url: '/home/contact_us',
+      .state('contact_us', {
+         url: '/contact_us',
          templateUrl: 'app/contact/contact.controller.html',
          controller: 'contactController'
       })
@@ -35,7 +35,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
          controller: 'dashboardController'
       })
       // .state('dashboard.contacts', {
-      //    url: '/dashboard/contacts',
+      //    url: '/contacts',
       //    templateUrl: 'app/contact/contact.controller.html',
       //    controller: 'contactController'
       // })

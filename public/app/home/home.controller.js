@@ -4,7 +4,7 @@ app.controller('homeController', ['$scope', '$state',
 
       $scope.goToContact = function () {
          console.log('goToContact called');
-         $state.go('home.contact_us');
+         $state.go('contact_us');
       }
 
       $scope.goToSignupAgent = function () {
