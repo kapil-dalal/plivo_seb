@@ -13,7 +13,7 @@ app.controller('dashboardController', ['websocketService', "$rootScope", "$scope
       $scope.statusTxt = '';
       $scope.makeCallTxt = '';
       $scope.sipTest = 'sip:kapilreceivecall170208155117@phone.plivo.com';
-      $scope.sip = 'sip:kapilagent1170208155150@phone.plivo.com';
+      $scope.sip = '';
       $scope.sip1 = '+918588842775';
       $scope.btnContainerBox = false;
       $scope.linkMute = false;
