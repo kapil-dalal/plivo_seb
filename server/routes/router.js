@@ -80,47 +80,32 @@ router.all('/receive_customer_call/', function (request, response) {
 });
 
 router.all('/hangup_customer_call/', function (request, response) {
-   console.log('hangup_customer_call: ', request);
    response.end('');
-   // var speakBusy = "All lines are busy. Please call after some time.";
-   // var speakForward = "Thanks for calling. We are forwarding call to our customer care support.";
-   // var speakError = "error got";
-   // try {
-   //    var r = plivo.Response();
-   //    agentStatus.getFreeAgent(function (err, agentDetail) {
-   //       if (err) {
-   //          console.log('get free agent error: ', err);
-   //          r.addSpeak(speakError);
-   //          sendResponse(response, r);
-   //       } else {
-   //          agentStatus.updateAgentStatusagentDetails(connection.userId, constants.AGENT_STATUS_TYPE.ENGAGED, function () {
-   //             if (err) {
-   //                console.log('get free agent error: ', err);
-   //                r.addSpeak(speakError);
-   //                sendResponse(response, r);
-   //             } else {
-   //                console.log('call is forwarding: ', agentDetail);
-   //                if (agentDetail) {
-   //                   r.addSpeak(speakForward);
-   //                   var params = {
-   //                      dialMusic: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/"
-   //                   }
-   //                   var d = r.addDial(params);
-   //                   d.addUser(agentDetail[constants.SCHEMA_AGENTS.SIP]);
-   //                   console.log('forward call xml: ', r.toXML());
-   //                } else {
-   //                   r.addSpeak(speakBusy);
-   //                }
-   //                sendResponse(response, r);
-   //             }
-   //          })
-   //       }
-   //    });
-   // } catch (err) {
-   //    console.log('receive_customer_call error: ', err);
-   //    r.addSpeak(speakError);
-   //    sendResponse(response, r);
-   // }
+
+   var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
+   console.log('hangup_customer_call: ', data);
+   var toSip = data.To;
+
+   var agentQuery = { $table: constants.SCHEMA_NAMES.AGENTS, $filter: constants.SCHEMA_AGENTS.SIP + " = '" + toSip + "'" };
+   dbService.query(agentQuery, function (err, agetntResult) {
+      if (err) {
+         return;
+      } else {
+         agetntResult = agetntResult[0];
+         var agentId = agetntResult[constants.SCHEMA_AGENTS.ID];
+         if (agetntResult) {
+            var agentStatusQuery = { $table: constants.SCHEMA_NAMES.AGENT_STATUS, $filter: constants.SCHEMA_AGENT_STATUS.AGENT_ID + " = '" + agentId + "'" };
+            dbService.query(agentStatusQuery, function (err, agetntStatusResult) {
+               agetntStatusResult = agetntStatusResult[0];
+               if (agetntStatusResult && agetntStatusResult[constants.SCHEMA_AGENT_STATUS.STATUS_ID] == constants.AGENT_STATUS_TYPE.ENGAGED) {
+                  agentStatus.updateAgentStatusagentDetails(agentId, constants.AGENT_STATUS_TYPE.FREE, function () {
+
+                  });
+               }
+            });
+         }
+      }
+   });
 });
 
 function sendResponse(response, r) {
