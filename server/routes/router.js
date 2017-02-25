@@ -1,4 +1,5 @@
 var express = require('express');
+var dbService = require('../db/db.service');
 var agentStatus = require('../agent_status/agent.status');
 var constants = require('../constants');
 var router = express.Router();
