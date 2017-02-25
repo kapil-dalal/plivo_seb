@@ -121,9 +121,12 @@ function outboundCall(request, response) {
                }
             ];
             dbService.update(updates, function (err, result) {
-               r.addSpeak(connectingMessage);
-               sendResponse(response, r);
+
             })
+            r.addSpeak(connectingMessage);
+            var d = r.addDial();
+            d.addNumber(to);
+            sendResponse(response, r);
          } else {
             r.addSpeak(errorMsg);
             sendResponse(response, r);
