@@ -49,6 +49,7 @@ router.all('/receive_customer_call/', function (request, response) {
 });
 
 function inboundCall(request, response) {
+   var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
    var speakBusy = "All lines are busy. Please call after some time.";
    var speakForward = "Thanks for calling. We are forwarding call to our customer care support.";
    var speakError = "error got";
