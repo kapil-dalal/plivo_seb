@@ -1,6 +1,7 @@
 var app = angular.module('plivo', [
    'ui.router',
-   'ngWebSocket'
+   'ngWebSocket',
+   'ngCookies'
 ]);
 
 app.config(function ($stateProvider, $urlRouterProvider) {
@@ -26,7 +27,7 @@ app.config(function ($stateProvider, $urlRouterProvider) {
       })
       .state('signupAgent', {
          url: '/signupAgent',
-         templateUrl: 'app/signup/agent.controller.html',
+         templateUrl: 'app/signup/agent.signup.controller.html',
          controller: 'signupAgentController'
       })
       .state('dashboard', {

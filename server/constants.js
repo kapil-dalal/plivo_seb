@@ -19,6 +19,7 @@ var SCHEMA_NAMES = {
    USER_STATUS: 'user_status',
    AGENT_STATUS_TYPE: 'agent_status_types',
    AGENT_STATUS: 'agent_status',
+   CUSTOMERS: 'customers',
    USERS: 'users',
    AGENTS: 'agents',
    USER_TYPES: 'user_types'
@@ -73,6 +74,18 @@ var SCHEMA_AGENTS = {
    STATUS_ID: 'status_id',
 }
 
+var SCHEMA_CUSTOMERS = {
+   ID: 'id',
+   NAME: 'name',
+   EMAIL_ID: 'email_id',
+   PHONE_NUMBER: 'phone_number',
+   ADDRESS_1: 'address_1',
+   ADDRESS_2: 'address_2',
+   CITY: 'city',
+   STATE: 'state',
+   COUNTRY: 'country',
+}
+
 var TO_SIP = "sip:kapilagent1170208155150@phone.plivo.com"
 
 module.exports.USER_TYPES = USER_TYPES;
@@ -87,3 +100,4 @@ module.exports.SCHEMA_AGENT_STATUS = SCHEMA_AGENT_STATUS;
 module.exports.SCHEMA_USERS = SCHEMA_USERS;
 module.exports.SCHEMA_AGENTS = SCHEMA_AGENTS;
 module.exports.TO_SIP = TO_SIP;
+module.exports.SCHEMA_CUSTOMERS = SCHEMA_CUSTOMERS;

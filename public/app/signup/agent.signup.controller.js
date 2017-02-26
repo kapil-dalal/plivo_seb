@@ -18,6 +18,7 @@ app.controller('signupAgentController', ["$scope", '$state', 'httpService',
             alert('name is required.');
             return;
          }
+
          if (!$scope.email_id || $scope.email_id.length == 0) {
             alert('email is required.');
             return;
@@ -30,6 +31,13 @@ app.controller('signupAgentController', ["$scope", '$state', 'httpService',
             alert('user name is required.');
             return;
          }
+
+         var letterNumber = /^[0-9a-zA-Z]+$/;
+         if (!($scope.user_name.match(letterNumber))) {
+            alert('Username can not have special characters, it should contain only alphanumeric.');
+            return;
+         }
+
          if (!$scope.password || $scope.password.length == 0) {
             alert('password is required.');
             return;

@@ -34,11 +34,25 @@ function createDB() {
       + " user_id INT NOT NULL, "
       + " status_id INT NOT NULL, "
       + " call_count INT, "
-      + " call_uuid VARCHAR(200) NOT NULL UNIQUE "
+      + " call_uuid VARCHAR(200), "
       + " PRIMARY KEY (id), "
       + " FOREIGN KEY (agent_id) REFERENCES agents(id) ON DELETE NO ACTION ON UPDATE NO ACTION, "
       + " FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION, "
       + " FOREIGN KEY (status_id) REFERENCES agent_status_types(id) ON DELETE NO ACTION ON UPDATE NO ACTION "
+      + " );";
+
+   var CUSTOMERS = "CREATE TABLE IF NOT EXISTS customers"
+      + " ( "
+      + " id INT NOT NULL AUTO_INCREMENT UNIQUE, "
+      + " name VARCHAR(200), "
+      + " email_id VARCHAR(200), "
+      + " phone_number VARCHAR(200), "
+      + " address_1 VARCHAR(500), "
+      + " address_2 VARCHAR(500), "
+      + " city VARCHAR(200), "
+      + " state VARCHAR(200), "
+      + " country VARCHAR(200), "
+      + " PRIMARY KEY (id) "
       + " );";
 
    var USERS = "CREATE TABLE IF NOT EXISTS users"
@@ -91,6 +105,7 @@ function createDB() {
       USER_TYPES,
       AGENT_STATUS_TYPES,
       AGENT_STATUS,
+      CUSTOMERS,
       USERS,
       AGENTS,
       USER_STATUS_DATA_1,
@@ -106,6 +121,7 @@ function createDB() {
       "user_types",
       "agent_status_types",
       "agent_status",
+      "customers",
       "users",
       "agents",
       'USER_STATUS_DATA_1',

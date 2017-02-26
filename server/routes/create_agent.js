@@ -12,8 +12,15 @@ var p = plivo.RestAPI({
 
 router.post('/register_agent', function (request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   if (!data.email_id || !data.name) {
-      response.status(500).send(new Error('Name / Email can not left blank'));
+   if (!data.email_id || !data.name || !data.user_name) {
+      response.status(500).send(new Error('Name / Email / User Name can not left blank'));
+      return;
+   }
+
+   var letterNumber = /^[0-9a-zA-Z]+$/;
+   if (!(data.user_name.match(letterNumber))) {
+      alert('in name only alphanumeric is required.');
+      response.status(500).send(new Error('Username can not have special characters, it should contain only alphanumeric.'));
       return;
    }
    var agentData = {};
@@ -36,14 +43,14 @@ router.post('/register_agent', function (request, response) {
    try {
       dbService.insert([{ $table: constants.SCHEMA_NAMES.USERS, $insert: [userData] }], function (err, result) {
          if (err) {
-            console.log('users err: ', err);
+            writeLog('users err: ', err);
             response.status(500).send(err);
          } else {
             var userId = result.users[0].insertId;
             agentData[constants.SCHEMA_AGENTS.USER_ID] = userId;
             dbService.insert([{ $table: constants.SCHEMA_NAMES.AGENTS, $insert: [agentData] }], function (err, agentResult) {
                if (err) {
-                  console.log('agent err: ', err);
+                  writeLog('agent err: ', err);
                   response.status(500).send(err);
                } else {
                   response.end(JSON.stringify(agentResult));
@@ -68,9 +75,9 @@ router.post('/register_agent', function (request, response) {
                            updateAgentData[constants.SCHEMA_AGENTS.SIP_APP_ID] = endpointDetailResponse.api_id;
                            dbService.update([{ $table: constants.SCHEMA_NAMES.AGENTS, $update: updateAgentData, $filter: constants.SCHEMA_AGENTS.ID + "=" + agentId }], function (err, agentResult) {
                               if (err) {
-                                 console.log('agent err: ', err);
+                                 writeLog('agent err: ', err);
                               } else {
-                                 //console.log('agent agentResult: ', agentResult);
+                                 //writeLog('agent agentResult: ', agentResult);
                               }
                            })
                         });
@@ -94,12 +101,16 @@ function createEndPoint(agentData, cb) {
    };
 
    p.create_endpoint(params, function (status, response) {
-      console.log('create_endpoint Status: ', status);
-      console.log('create_endpoint API Response:\n', response);
+      writeLog('create_endpoint Status: ', status);
+      writeLog('create_endpoint API Response:\n', response);
       if (status >= 200 && status <= 300) {
          cb(null, response);
       } else {
          cb(new Error(JSON.stringify({ msg: 'User not created', message: response })));
       }
    });
+}
+
+function writeLog(log1, log2) {
+   // console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
 }

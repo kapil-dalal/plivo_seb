@@ -11,7 +11,7 @@ var mySIP = 'sip:kapilagent1170208155150@phone.plivo.com';
 
 function userSelection(request, response, cb) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   console.log('userSelection request data: ', request.query, request.body);
+   writeLog('userSelection request data: ', request.query, request.body);
 
    var digit = data.Digits;
    var plivoResponse = plivo.Response();
@@ -46,7 +46,7 @@ function selectedFour(request, response, plivoResponse, data, cb) {
 
    var conference_name = "My Conf"; // Conference Room name
    plivoResponse.addConference(conference_name, params);
-   console.log(plivoResponse.toXML());
+   writeLog(plivoResponse.toXML());
 
    cb(plivoResponse.toXML());
 }
@@ -60,7 +60,7 @@ function selectedOne(request, response, plivoResponse, data, cb) {
    var d = plivoResponse.addDial(params);
    var to = request.params.to || "+917065201417";// || "+918588842775";
    d.addNumber(to);
-   console.log('plivoResponse.toXML(): ', plivoResponse.toXML());
+   writeLog('plivoResponse.toXML(): ', plivoResponse.toXML());
    cb(plivoResponse.toXML());
 }
 
@@ -85,10 +85,14 @@ function wrongSelection(request, response, plivoResponse, data, cb) {
    cb(plivoResponse.toXML());
    setTimeout(function () {
       p.hangup_call(params, function (status, response) {
-         console.log('Status: ', status);
-         console.log('API Response:\n', response);
+         writeLog('Status: ', status);
+         writeLog('API Response:\n', response);
       });
    }, 0);
+}
+
+function writeLog(log1, log2) {
+   // console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
 }
 
 module.exports.userSelection = userSelection;

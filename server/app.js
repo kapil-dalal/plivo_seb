@@ -3,6 +3,7 @@ var express = require('express');
 var app = express();
 var util = require('util');
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 var path = require('path');
 var fs = require('fs');
 var path = require('path');
@@ -12,9 +13,12 @@ var routes = require('./routes/router');
 var createAgent = require('./routes/create_agent');
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+
 // console.log('__dirname: ',__dirname, path.join(__dirname, '../public'));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use('/user', require('./routes/login'));
+app.use('/customer', require('./routes/customer_session'));
 app.use('/api', require('./routes/create_agent'));
 app.use('/', require('./routes/router'));
 

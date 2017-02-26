@@ -30,15 +30,15 @@ router.get('/make_call', function (req, res) {
 
    // Prints the complete response
    p.make_call(params, function (status, response) {
-      console.log('Status: ', status);
-      console.log('API Response:\n', response);
+      writeLog('Status: ', status);
+      writeLog('API Response:\n', response);
    });
 
 });
 
 router.all('/receive_customer_call/', function (request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   console.log('receive_customer_call: ', data);
+   writeLog('receive_customer_call: ', data);
    var to = data.To;
    if (to === constants.TO_SIP) {
       inboundCall(request, response);
@@ -56,18 +56,18 @@ function inboundCall(request, response) {
       var r = plivo.Response();
       agentStatus.getFreeAgent(function (err, agentDetail) {
          if (err) {
-            console.log('get free agent error: ', err);
+            writeLog('get free agent error: ', err);
             r.addSpeak(speakError);
             sendResponse(response, r);
          } else {
             if (agentDetail) {
                agentStatus.updateAgentStatusagentDetails(agentDetail[constants.SCHEMA_AGENTS.ID], constants.AGENT_STATUS_TYPE.ENGAGED, data.CallUUID, function () {
                   if (err) {
-                     console.log('get free agent error: ', err);
+                     writeLog('get free agent error: ', err);
                      r.addSpeak(speakError);
                      sendResponse(response, r);
                   } else {
-                     console.log('call is forwarding: ', agentDetail);
+                     writeLog('call is forwarding: ', agentDetail);
 
                      r.addSpeak(speakForward);
                      var params = {
@@ -75,7 +75,7 @@ function inboundCall(request, response) {
                      }
                      var d = r.addDial(params);
                      d.addUser(agentDetail[constants.SCHEMA_AGENTS.SIP]);
-                     console.log('forward call xml: ', r.toXML());
+                     writeLog('forward call xml: ', r.toXML());
                      sendResponse(response, r);
                   }
                })
@@ -86,7 +86,7 @@ function inboundCall(request, response) {
          }
       });
    } catch (err) {
-      console.log('receive_customer_call error: ', err);
+      writeLog('receive_customer_call error: ', err);
       r.addSpeak(speakError);
       sendResponse(response, r);
    }
@@ -94,7 +94,7 @@ function inboundCall(request, response) {
 
 function outboundCall(request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   console.log('receive_customer_call: ', data);
+   writeLog('receive_customer_call: ', data);
    var from = data.From;
    var to = data.To;
    var r = plivo.Response();
@@ -142,7 +142,7 @@ router.all('/hangup_customer_call/', function (request, response) {
    response.end('');
 
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   console.log('hangup_customer_call: ', data);
+   writeLog('hangup_customer_call: ', data);
 
    var agentStatusUpdate = {}
    agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.STATUS_ID] = constants.AGENT_STATUS_TYPE.FREE;
@@ -167,7 +167,7 @@ function sendResponse(response, r) {
 }
 
 router.get('/receive_call/', function (request, response) {
-   // console.log('request: ', request.query);
+   // writeLog('request: ', request.query);
    // var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
 
    // var r = plivo.Response();
@@ -199,7 +199,7 @@ router.get('/receive_call/', function (request, response) {
 
    var conference_name = "My Conf"; // Conference Room name
    plivoResponse.addConference(conference_name, params);
-   console.log(plivoResponse.toXML());
+   writeLog(plivoResponse.toXML());
 
    // cb(plivoResponse.toXML());
 
@@ -217,12 +217,12 @@ router.all('/user_selection/:to', function (request, response) {
 });
 
 router.get('/forward_call/', function (req, res) {
-   console.log('call is forwarding');
+   writeLog('call is forwarding');
    var r = plivo.Response();
    r.addSpeak('Connecting your call');
    var d = r.addDial();
    d.addNumber("+918588842775");
-   console.log(r.toXML());
+   writeLog(r.toXML());
 
    res.set({
       'Content-Type': 'text/xml'
@@ -234,10 +234,10 @@ router.all('/custom_ringing_tone/', function (request, response) {
    var r = plivo.Response();
 
    r.addPlay("https://s3.amazonaws.com/plivocloud/music.mp3");
-   console.log('custom_ringing_tone: ' + r.toXML());
+   writeLog('custom_ringing_tone: ' + r.toXML());
 
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   console.log('/custom_ringing_tone/ to queue call data: ', data);
+   writeLog('/custom_ringing_tone/ to queue call data: ', data);
    response.set({
       'Content-Type': 'text/xml'
    });
@@ -246,16 +246,16 @@ router.all('/custom_ringing_tone/', function (request, response) {
 });
 
 router.all('/dial/', function (request, response) {
-   console.log('call on uri /confrence_callback/');
+   writeLog('call on uri /confrence_callback/');
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   console.log('/confrence_callback/ to hold call data: ', data);
+   writeLog('/confrence_callback/ to hold call data: ', data);
 
    var mySIP = 'sip:kapilagent1170208155150@phone.plivo.com';
    var r = plivo.Response();
    var dial_element = r.addDial();
    dial_element.addUser(mySIP);
    var xml = r.toXML();
-   console.log('dial XML: ', xml);
+   writeLog('dial XML: ', xml);
    response.set({
       'Content-Type': 'text/xml'
    });
@@ -264,7 +264,7 @@ router.all('/dial/', function (request, response) {
 
 router.all('/confrence_callback/', function (request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   console.log('call on uri /confrence_callback/ to hold call data: ', data);
+   writeLog('call on uri /confrence_callback/ to hold call data: ', data);
    response.set({
       'Content-Type': 'text/xml'
    });
@@ -301,32 +301,32 @@ router.all('/confrence_callback/', function (request, response) {
          var getConParm = {
             conference_id: data.ConferenceName
          }
-         console.log('after 20 second to transfer the call getConParm: ', getConParm);
+         writeLog('after 20 second to transfer the call getConParm: ', getConParm);
          p.get_live_conference(getConParm, function (status, response) {
-            console.log('get_live_conference Status: ', status);
-            console.log('get_live_conference API Response:\n', response);
+            writeLog('get_live_conference Status: ', status);
+            writeLog('get_live_conference API Response:\n', response);
          })
          // p.transfer_call(params, function (status, response) {
-         //    console.log('transfer_call Status: ', status);
-         //    console.log('transfer_call API Response:\n', response);
+         //    writeLog('transfer_call Status: ', status);
+         //    writeLog('transfer_call API Response:\n', response);
          // });
       }, 0);
    }
 });
 
 router.all('/play/', function (request, response) {
-   console.log('call on uri /play/');
+   writeLog('call on uri /play/');
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   console.log('/play/ to hold call data: ', data);
+   writeLog('/play/ to hold call data: ', data);
    // var params = {
    //    call_uuid: data.CallUUID,
    //    urls: "https://s3.amazonaws.com/plivocloud/music.mp3",
    //    length: 120,
    // };
-   // console.log('/play/ to hold call params: ', params);
+   // writeLog('/play/ to hold call params: ', params);
    // p.play(params, function (status, holeResponse) {
-   //    console.log('/play/ after request post call Status: ', status);
-   //    console.log('/play/ after request post call holeResponse: ', holeResponse);
+   //    writeLog('/play/ after request post call Status: ', status);
+   //    writeLog('/play/ after request post call holeResponse: ', holeResponse);
    // });
 
 
@@ -336,10 +336,14 @@ router.all('/play/', function (request, response) {
 router.get('/speak/', function (request, response) {
    // Generate a Speak XML with the details of the text to play on the call.
    var r = plivo.Response();
-   console.log('get /speak/ received');
+   writeLog('get /speak/ received');
    r.addSpeak('Hello, you just received your first call');
-   console.log(r.toXML());
-   console.log('API Response:\n', response);
+   writeLog(r.toXML());
+   writeLog('API Response:\n', response);
    response.set({ 'Content-Type': 'text/xml' });
    response.send(r.toXML());
 });
+
+function writeLog(log1, log2) {
+   // console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
+}

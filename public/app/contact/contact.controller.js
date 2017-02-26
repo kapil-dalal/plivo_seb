@@ -1,17 +1,77 @@
-app.controller('contactController', ["$scope",
-   function ($scope) {
+app.controller('contactController', ["$scope", "$cookies", "httpService",
+   function ($scope, $cookies, httpService) {
       console.log('phoneController called');
+      $scope.isSession = false;
+      var customerSessionPlivo = $cookies.get('customerSessionPlivo');
+      console.log('customerSessionPlivo: ', customerSessionPlivo);
+      if (customerSessionPlivo) {
+         $scope.isSession = true;
+         console.log('session found');
+      }
+      // set session
+      $scope.name = '';
+      $scope.email_id = '';
+      $scope.phone_number = '';
+      $scope.address_1 = '';
+      $scope.address_2 = '';
+      $scope.city = '';
+      $scope.state = '';
+      $scope.country = '';
 
-      // variables
-      $scope.userName = '';
-      $scope.userName1 = 'kapilmakecall170208155025';
-      $scope.userName2 = 'kapilagent1170208155150';
+      $scope.createCustomerSession = function () {
+         console.log();
+
+         if (!$scope.name || $scope.name.length == 0) {
+            alert('name is required.');
+            return;
+         }
+
+         if (!$scope.email_id || $scope.email_id.length == 0) {
+            alert('email is required.');
+            return;
+         }
+         if (!$scope.phone_number || $scope.phone_number.length == 0) {
+            alert('phone number is required.');
+            return;
+         }
+
+         var customerForm = {
+            name: $scope.name,
+            email_id: $scope.email_id,
+            phone_number: $scope.phone_number,
+            address_1: $scope.address_1,
+            address_2: $scope.address_2,
+            city: $scope.city,
+            state: $scope.state,
+            country: $scope.country,
+         }
+         console.log('customer form: ', customerForm);
+         httpService.createCustomerSession(customerForm,
+            function (response) {
+               console.log("controller createAgent response: ", response);
+               $scope.isSession = true;
+               initPlivo();
+            },
+            function (err) {
+               console.log("controller createAgent err: ", err);
+            })
+      }
+
+
+
+
+
+
+
+
+      // contact support team
+      $scope.userName = 'kapilmakecall170208155025';
+      // $scope.userName1 = 'kapilmakecall170208155025';
+      // $scope.userName2 = 'kapilagent1170208155150';
       $scope.password = 'kapil@1234';
       $scope.statusTxt = '';
       $scope.makeCallTxt = '';
-      $scope.sipTest = 'sip:kapilreceivecall170208155117@phone.plivo.com';
       $scope.sip = 'sip:kapilagent1170208155150@phone.plivo.com';
-      $scope.sip1 = '+918588842775';
       $scope.btnContainerBox = false;
       $scope.linkMute = false;
       $scope.linkUnmute = false;
@@ -25,17 +85,18 @@ app.controller('contactController', ["$scope",
          console.log("onReady...");
          $scope.statusTxt = 'Login';
          $scope.loginBox = true;
-      }
-
-      $scope.user1 = function () {
-         $scope.userName = $scope.userName1;
          login();
       }
 
-      $scope.user2 = function () {
-         $scope.userName = $scope.userName2;
-         login();
-      }
+      // $scope.user1 = function () {
+      //    $scope.userName = $scope.userName1;
+      //    login();
+      // }
+
+      // $scope.user2 = function () {
+      //    $scope.userName = $scope.userName2;
+      //    login();
+      // }
 
       login = function () {
          console.log('user name, password: ', $scope.userName, $scope.password);
@@ -265,7 +326,8 @@ app.controller('contactController', ["$scope",
          Plivo.onIncomingCallCanceled = onIncomingCallCanceled;
          Plivo.init();
       }
-
-      initPlivo();
+      if ($scope.isSession) {
+         initPlivo();
+      }
 
    }]);

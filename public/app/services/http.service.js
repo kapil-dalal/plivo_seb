@@ -35,9 +35,23 @@ app.factory('httpService', ['$http', function ($http) {
          });
    }
 
+   function createCustomerSession(params, successCB, errorCB) {
+      var url = '/customer/session';
+      $http.post(url, getParms(params), config)
+         .then(
+         function (response, status) {
+            successCB(response);
+         },
+         function (err) {
+            errorCB(err);
+         });
+   }
+
    return {
       createAgent: createAgent,
       login: login,
+      createCustomerSession: createCustomerSession,
+      
    }
 
 }]);
