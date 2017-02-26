@@ -57,13 +57,6 @@ app.controller('contactController', ["$scope", "$cookies", "httpService",
             })
       }
 
-
-
-
-
-
-
-
       // contact support team
       $scope.userName = 'kapilmakecall170208155025';
       // $scope.userName1 = 'kapilmakecall170208155025';
