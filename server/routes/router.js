@@ -166,7 +166,7 @@ router.all('/hangup_customer_call/', function (request, response) {
    response.end('');
 
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   writeLog('hangup_customer_call: ', data);
+   console.log('hangup_customer_call: ', data);
 
    var agentStatusUpdate = {}
    agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.STATUS_ID] = constants.AGENT_STATUS_TYPE.FREE;
