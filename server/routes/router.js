@@ -6,7 +6,7 @@ var router = express.Router();
 
 module.exports = router;
 var plivo = require('plivo');
-var p = plivo.RestAPI({
+var plivoApi = plivo.RestAPI({
    authId: 'MAM2M4ZGE3NJIWMGRIM2',
    authToken: 'MzhlYjBhOGExNGQ0NzI0ZDY4YjFkOWM4MzEwNjI3'
 });
@@ -29,7 +29,7 @@ router.get('/make_call', function (req, res) {
    };
 
    // Prints the complete response
-   p.make_call(params, function (status, response) {
+   plivoApi.make_call(params, function (status, response) {
       writeLog('Status: ', status);
       writeLog('API Response:\n', response);
    });
@@ -50,6 +50,19 @@ router.all('/receive_customer_call/', function (request, response) {
 
 function inboundCall(request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
+   console.log('inbound data: ', data);
+   var params = {
+      'call_uuid': data.CallUUID // ID of the call.
+   };
+   console.log('inbound params: ', params);
+   // Prints the complete response
+   
+   plivoApi.get_cdr(params, function (status, response) {
+      console.log('inboundCall get_cdr Status: ', status);
+      console.log('inboundCall get_cdr API Response:\n', response);
+   });
+
+
    var speakBusy = "All lines are busy. Please call after some time.";
    var speakForward = "Thanks for calling. We are forwarding call to our customer care support.";
    var speakError = "error got";
@@ -76,6 +89,16 @@ function inboundCall(request, response) {
                      }
                      var d = r.addDial(params);
                      d.addUser(agentDetail[constants.SCHEMA_AGENTS.SIP]);
+
+                     var record_params = {
+                        'action': request.protocol + '://' + request.headers.host + '/record_action/', // Submit the result of the record to this URL
+                        'method': "GET", // HTTP method to submit the action URL
+                        // 'callbackUrl': "https://intense-brook-8241.herokuapp.com/record_callback/", // If set, this URL is fired in background when the recorded file is ready to be used.
+                        // 'callbackMethod': "GET" // Method used to notify the callbackUrl.
+                     }
+
+                     r.addRecord(record_params)
+
                      writeLog('forward call xml: ', r.toXML());
                      sendResponse(response, r);
                   }
@@ -166,6 +189,25 @@ function sendResponse(response, r) {
    });
    response.end(r.toXML());
 }
+
+router.all('/record_action/', function (request, response) {
+   var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
+   writeLog('receive_customer_call: ', data);
+
+   // var params = {
+   //    'call_uuid': '55309cee-821d-11e4-9a73-498d468c930b' // ID of the call.
+   // };
+
+   // // Prints the complete response
+   // plivoApi.get_cdr(params, function (status, response) {
+   //    console.log('Status: ', status);
+   //    console.log('API Response:\n', response);
+   // });
+
+   // require('./user_selection').userSelection(request, response, function (result) {
+   //    response.send(result);
+   // });
+});
 
 router.get('/receive_call/', function (request, response) {
    // writeLog('request: ', request.query);
@@ -303,11 +345,11 @@ router.all('/confrence_callback/', function (request, response) {
             conference_id: data.ConferenceName
          }
          writeLog('after 20 second to transfer the call getConParm: ', getConParm);
-         p.get_live_conference(getConParm, function (status, response) {
+         plivoApi.get_live_conference(getConParm, function (status, response) {
             writeLog('get_live_conference Status: ', status);
             writeLog('get_live_conference API Response:\n', response);
          })
-         // p.transfer_call(params, function (status, response) {
+         // plivoApi.transfer_call(params, function (status, response) {
          //    writeLog('transfer_call Status: ', status);
          //    writeLog('transfer_call API Response:\n', response);
          // });
@@ -325,7 +367,7 @@ router.all('/play/', function (request, response) {
    //    length: 120,
    // };
    // writeLog('/play/ to hold call params: ', params);
-   // p.play(params, function (status, holeResponse) {
+   // plivoApi.play(params, function (status, holeResponse) {
    //    writeLog('/play/ after request post call Status: ', status);
    //    writeLog('/play/ after request post call holeResponse: ', holeResponse);
    // });
