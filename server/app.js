@@ -46,8 +46,8 @@ var wsServer = new WebSocketServer({
 
 var constants = require('./constants');
 var agentStatus = require('./agent_status/agent.status');
-var dbService = require('./db/db.service');
-dbService.createDB();
+// var dbService = require('./db/db.service');
+// dbService.createDB();
 
 var userConnections = {};
 var userConnectionsCounter = {};
@@ -167,12 +167,12 @@ var p = plivo.RestAPI({
 // });
 
 
-// var params = {
-//    'call_uuid': '9a7c10a6-f130-11e6-9883-794fb1d4fde8' // ID of the call.
-// };
+var params = {
+   'call_uuid': '5dfe60ec-fda7-11e6-b8a3-d3f6ab578519' // ID of the call.
+};
 
 // // Prints the complete response
-// p.get_cdr(params, function (status, response) {
-//    console.log('Status: ', status);
-//    console.log('API Response:\n', response);
-// });
+p.get_cdr(params, function (status, response) {
+   console.log('Status: ', status);
+   console.log('API Response:\n', response);
+});
