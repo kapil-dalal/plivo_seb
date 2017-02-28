@@ -54,18 +54,21 @@ function inboundCall(request, response) {
    var params = {
       'call_uuid': data.CallUUID // ID of the call.
    };
-   console.log('inbound params: ', params);
-   // Prints the complete response
 
-   plivoApi.get_cdr(params, function (status, response) {
-      console.log('inboundCall get_cdr Status: ', status);
-      console.log('inboundCall get_cdr API Response:\n', response);
-   });
+   setTimeout(function () {
 
-   plivoApi.get_live_call(params, function (status, response) {
-      console.log('inboundCall get_live_call Status: ', status);
-      console.log('inboundCall get_live_call API Response:\n', response);
-   });
+      console.log('after 30 sec inbound params: ', params);
+
+      plivoApi.get_cdr(params, function (status, response) {
+         console.log('inboundCall get_cdr Status: ', status);
+         console.log('inboundCall get_cdr API Response:\n', response);
+      });
+
+      plivoApi.get_live_call(params, function (status, response) {
+         console.log('inboundCall get_live_call Status: ', status);
+         console.log('inboundCall get_live_call API Response:\n', response);
+      });
+   }, 30000)
 
 
    var speakBusy = "All lines are busy. Please call after some time.";
