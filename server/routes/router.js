@@ -68,6 +68,11 @@ function inboundCall(request, response) {
          console.log('inboundCall get_live_call Status: ', status);
          console.log('inboundCall get_live_call API Response:\n', response);
       });
+
+      plivoApi.get_live_calls({}, function (status, response) {
+         console.log('inboundCall get_live_calls Status: ', status);
+         console.log('inboundCall get_live_calls API Response:\n', response);
+      });
    }, 30000)
 
 
