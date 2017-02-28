@@ -56,10 +56,15 @@ function inboundCall(request, response) {
    };
    console.log('inbound params: ', params);
    // Prints the complete response
-   
+
    plivoApi.get_cdr(params, function (status, response) {
       console.log('inboundCall get_cdr Status: ', status);
       console.log('inboundCall get_cdr API Response:\n', response);
+   });
+
+   plivoApi.get_live_call(params, function (status, response) {
+      console.log('inboundCall get_live_call Status: ', status);
+      console.log('inboundCall get_live_call API Response:\n', response);
    });
 
 
