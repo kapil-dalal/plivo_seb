@@ -9,14 +9,12 @@ var fs = require('fs');
 var path = require('path');
 var WebSocketServer = require('websocket').server;
 
-var routes = require('./routes/router');
-var createAgent = require('./routes/create_agent');
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // console.log('__dirname: ',__dirname, path.join(__dirname, '../public'));
 app.use(express.static(path.join(__dirname, '../public')));
+
 app.use('/user', require('./routes/login'));
 app.use('/customer', require('./routes/customer_session'));
 app.use('/api', require('./routes/create_agent'));
@@ -46,8 +44,8 @@ var wsServer = new WebSocketServer({
 
 var constants = require('./constants');
 var agentStatus = require('./agent_status/agent.status');
-// var dbService = require('./db/db.service');
-// dbService.createDB();
+var dbService = require('./db/db.service');
+dbService.createDB();
 
 var userConnections = {};
 var userConnectionsCounter = {};
@@ -116,11 +114,11 @@ wsServer.on('request', function (request) {
    });
 });
 
-var plivo = require('plivo');
-var p = plivo.RestAPI({
-   authId: 'MAM2M4ZGE3NJIWMGRIM2',
-   authToken: 'MzhlYjBhOGExNGQ0NzI0ZDY4YjFkOWM4MzEwNjI3'
-});
+// var plivo = require('plivo');
+// var p = plivo.RestAPI({
+//    authId: 'MAM2M4ZGE3NJIWMGRIM2',
+//    authToken: 'MzhlYjBhOGExNGQ0NzI0ZDY4YjFkOWM4MzEwNjI3'
+// });
 
 // p.get_live_conferences({}, function (status, response) {
 //    console.log('get_live_conference Status: ', status);
@@ -167,12 +165,12 @@ var p = plivo.RestAPI({
 // });
 
 
-var params = {
-   'call_uuid': '5dfe60ec-fda7-11e6-b8a3-d3f6ab578519' // ID of the call.
-};
+// var params = {
+//    'call_uuid': '5dfe60ec-fda7-11e6-b8a3-d3f6ab578519' // ID of the call.
+// };
 
-// // Prints the complete response
-p.get_cdr(params, function (status, response) {
-   console.log('Status: ', status);
-   console.log('API Response:\n', response);
-});
+// // // Prints the complete response
+// p.get_cdr(params, function (status, response) {
+//    console.log('Status: ', status);
+//    console.log('API Response:\n', response);
+// });

@@ -87,17 +87,20 @@ var SCHEMA_CUSTOMERS = {
 }
 
 var TO_SIP = "sip:kapilagent1170208155150@phone.plivo.com"
+var TO_NUMBER = "+41615019508"
 
 module.exports.USER_TYPES = USER_TYPES;
 module.exports.USER_STATUS = USER_STATUS;
 module.exports.AGENT_STATUS_TYPE = AGENT_STATUS_TYPE;
 module.exports.SCHEMA_NAMES = SCHEMA_NAMES;
 
+module.exports.SCHEMA_CUSTOMERS = SCHEMA_CUSTOMERS;
 module.exports.SCHEMA_USER_STATUS = SCHEMA_USER_STATUS;
 module.exports.SCHEMA_USER_TYPES = SCHEMA_USER_TYPES;
 module.exports.SCHEMA_AGENT_STATUS_TYPES = SCHEMA_AGENT_STATUS_TYPES;
 module.exports.SCHEMA_AGENT_STATUS = SCHEMA_AGENT_STATUS;
 module.exports.SCHEMA_USERS = SCHEMA_USERS;
 module.exports.SCHEMA_AGENTS = SCHEMA_AGENTS;
+
 module.exports.TO_SIP = TO_SIP;
-module.exports.SCHEMA_CUSTOMERS = SCHEMA_CUSTOMERS;
+module.exports.TO_NUMBER = TO_NUMBER;

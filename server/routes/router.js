@@ -40,7 +40,7 @@ router.all('/receive_customer_call/', function (request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
    writeLog('receive_customer_call: ', data);
    var to = data.To;
-   if (to === constants.TO_SIP) {
+   if (to === constants.TO_SIP || to === constants.TO_NUMBER) {
       inboundCall(request, response);
    } else {
       outboundCall(request, response);
@@ -56,20 +56,23 @@ function inboundCall(request, response) {
    };
 
    setTimeout(function () {
-
+      var plivoApiT = plivo.RestAPI({
+         authId: 'MAM2M4ZGE3NJIWMGRIM2',
+         authToken: 'MzhlYjBhOGExNGQ0NzI0ZDY4YjFkOWM4MzEwNjI3'
+      });
       console.log('after 30 sec inbound params: ', params);
 
-      plivoApi.get_cdr(params, function (status, response) {
+      plivoApiT.get_cdr(params, function (status, response) {
          console.log('inboundCall get_cdr Status: ', status);
          console.log('inboundCall get_cdr API Response:\n', response);
       });
 
-      plivoApi.get_live_call(params, function (status, response) {
+      plivoApiT.get_live_call(params, function (status, response) {
          console.log('inboundCall get_live_call Status: ', status);
          console.log('inboundCall get_live_call API Response:\n', response);
       });
 
-      plivoApi.get_live_calls({}, function (status, response) {
+      plivoApiT.get_live_calls({}, function (status, response) {
          console.log('inboundCall get_live_calls Status: ', status);
          console.log('inboundCall get_live_calls API Response:\n', response);
       });
@@ -401,5 +404,5 @@ router.get('/speak/', function (request, response) {
 });
 
 function writeLog(log1, log2) {
-   // console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
+   console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
 }
