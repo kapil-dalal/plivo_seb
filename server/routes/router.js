@@ -321,11 +321,11 @@ router.all('/dial/', function (request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
    writeLog('/dial/ to hold call data: ', data);
 
-   var mySIP = 'sip:kapilagent1170208155150@phone.plivo.com';
+   var mySIP = 'sip:agent1170223182308@phone.plivo.com';
    var r = plivo.Response();
    var dial_element = r.addDial();
-   dial_element.addNumber("+918588842775");
-   // dial_element.addUser(mySIP);
+   // dial_element.addNumber("+918588842775");
+   dial_element.addUser(mySIP);
    var xml = r.toXML();
    writeLog('dial XML: ', xml);
    response.set({
