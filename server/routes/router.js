@@ -36,7 +36,7 @@ router.get('/make_call', function (req, res) {
 
 });
 
-router.all('/receive_customer_call/', function (request, response) {
+router.all('/receive_customer_call1/', function (request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
    writeLog('receive_customer_call: ', data);
    var to = data.To;
@@ -206,7 +206,19 @@ function sendResponse(response, r) {
    response.end(r.toXML());
 }
 
-router.all('/receive_call/', function (request, response) {
+router.all('/receive_customer_call/', function (request, response) {
+   var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
+   writeLog('receive_customer_call: ', data);
+   var to = data.To;
+   if (to === constants.TO_SIP || to === constants.TO_NUMBER) {
+      inboundCall(request, response);
+   } else {
+      outboundCall(request, response);
+   }
+
+});
+
+router.all('/user_selection/', function (request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
    writeLog('receive_customer_call: ', data);
 
