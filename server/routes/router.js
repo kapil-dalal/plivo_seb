@@ -59,8 +59,8 @@ router.all('/receive_customer_call/', function (request, response) {
       };
       setTimeout(function () {
          var plivoApiT = plivo.RestAPI({
-            authId: 'SAZWE2NJVINJNHYWE1N2',
-            authToken: 'ZWViNGNiYzE1OTQwOWZiNjQ3ZDc3YTFmNzgxMzk5'
+            authId: 'SAMZHMYMQ2NMFJMWM0OW',
+            authToken: 'MjYwYTM1N2Y3NGNlNmZiNDJiN2U4MGZhYzY2NmE5'
          });
          console.log('after 30 sec inbound params: ', params);
 
