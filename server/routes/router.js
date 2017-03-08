@@ -350,7 +350,7 @@ router.all('/confrence_callback/', function (request, response) {
          });
 
          var params = {
-            "legs": "both",
+            "legs": "aleg",
             'call_uuid': data.CallUUID, // ID of the call
             'aleg_url': request.protocol + '://' + request.headers.host + "/dial/",
             'aleg_method': "GET"
