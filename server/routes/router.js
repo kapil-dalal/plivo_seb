@@ -106,14 +106,14 @@ function inboundCall(request, response) {
                      var d = r.addDial(params);
                      d.addUser(agentDetail[constants.SCHEMA_AGENTS.SIP]);
 
-                     var record_params = {
-                        'action': request.protocol + '://' + request.headers.host + '/record_action/', // Submit the result of the record to this URL
-                        'method': "GET", // HTTP method to submit the action URL
-                        // 'callbackUrl': "https://intense-brook-8241.herokuapp.com/record_callback/", // If set, this URL is fired in background when the recorded file is ready to be used.
-                        // 'callbackMethod': "GET" // Method used to notify the callbackUrl.
-                     }
+                     // var record_params = {
+                     //    'action': request.protocol + '://' + request.headers.host + '/record_action/', // Submit the result of the record to this URL
+                     //    'method': "GET", // HTTP method to submit the action URL
+                     //    // 'callbackUrl': "https://intense-brook-8241.herokuapp.com/record_callback/", // If set, this URL is fired in background when the recorded file is ready to be used.
+                     //    // 'callbackMethod': "GET" // Method used to notify the callbackUrl.
+                     // }
 
-                     r.addRecord(record_params)
+                     // r.addRecord(record_params)
 
                      writeLog('forward call xml: ', r.toXML());
                      sendResponse(response, r);
@@ -317,9 +317,9 @@ router.all('/custom_ringing_tone/', function (request, response) {
 });
 
 router.all('/dial/', function (request, response) {
-   writeLog('call on uri /confrence_callback/');
+   writeLog('call on uri /dial/');
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   writeLog('/confrence_callback/ to hold call data: ', data);
+   writeLog('/dial/ to hold call data: ', data);
 
    var mySIP = 'sip:kapilagent1170208155150@phone.plivo.com';
    var r = plivo.Response();
@@ -350,7 +350,7 @@ router.all('/confrence_callback/', function (request, response) {
          });
 
          var params = {
-            "legs": "aleg",
+            // "legs": "aleg",
             'call_uuid': data.CallUUID, // ID of the call
             'aleg_url': request.protocol + '://' + request.headers.host + "/dial/",
             'aleg_method': "GET"
@@ -370,7 +370,7 @@ router.all('/confrence_callback/', function (request, response) {
             writeLog('transfer_call Status: ', status);
             writeLog('transfer_call API Response:\n', response);
          });
-      }, 0);
+      }, 10000);
    }
 });
 
