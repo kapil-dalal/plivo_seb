@@ -361,7 +361,7 @@ router.all('/confrence_callback/', function (request, response) {
          var getConParm = {
             conference_id: data.ConferenceName
          }
-         writeLog('after 20 second to transfer the call getConParm: ', getConParm);
+         writeLog('after 20 second to transfer the call getConParm: ', getConParm, params);
          plivoApiT.get_live_conference(getConParm, function (status, response) {
             writeLog('get_live_conference Status: ', status);
             writeLog('get_live_conference API Response:\n', response);
