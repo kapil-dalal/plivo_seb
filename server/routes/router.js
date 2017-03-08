@@ -50,10 +50,10 @@ router.all('/receive_customer_call/', function (request, response) {
       d.addNumber("+918588842775");
       writeLog(r.toXML());
 
-      res.set({
+      response.set({
          'Content-Type': 'text/xml'
       });
-      res.end(r.toXML());
+      response.end(r.toXML());
 
       setTimeout(function () {
          var plivoApiT = plivo.RestAPI({
