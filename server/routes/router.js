@@ -324,13 +324,14 @@ router.all('/dial/', function (request, response) {
    var mySIP = 'sip:kapilagent1170208155150@phone.plivo.com';
    var r = plivo.Response();
    var dial_element = r.addDial();
-   dial_element.addUser(mySIP);
+   dial_element.addNumber("+918588842775");
+   // dial_element.addUser(mySIP);
    var xml = r.toXML();
    writeLog('dial XML: ', xml);
    response.set({
       'Content-Type': 'text/xml'
    });
-   response.send(xml);
+   response.end(xml);
 });
 
 router.all('/confrence_callback/', function (request, response) {
