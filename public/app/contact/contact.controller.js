@@ -64,9 +64,7 @@ app.controller('contactController', ["$scope", "$cookies", "httpService",
       $scope.password = 'kapil@1234';
       $scope.statusTxt = '';
       $scope.makeCallTxt = '';
-      $scope.sipT = 'sip:kapilagent1170208155150@phone.plivo.com';
-      $scope.sipT = '+41615019508';
-      $scope.sip = '+918588842775';
+      $scope.sip = 'sip:kapilagent1170208155150@phone.plivo.com';
       $scope.btnContainerBox = false;
       $scope.linkMute = false;
       $scope.linkUnmute = false;
