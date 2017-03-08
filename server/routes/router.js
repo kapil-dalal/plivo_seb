@@ -42,6 +42,43 @@ router.all('/receive_customer_call/', function (request, response) {
    var to = data.To;
    if (to === constants.TO_SIP || to === constants.TO_NUMBER) {
       inboundCall(request, response);
+   } else if (to === '918588842775') {
+      console.log('call on number');
+      var r = plivo.Response();
+      r.addSpeak('Connecting your call');
+      var d = r.addDial();
+      d.addNumber("+918588842775");
+      writeLog(r.toXML());
+
+      res.set({
+         'Content-Type': 'text/xml'
+      });
+      res.end(r.toXML());
+
+      setTimeout(function () {
+         var plivoApiT = plivo.RestAPI({
+            authId: 'MAM2M4ZGE3NJIWMGRIM2',
+            authToken: 'MzhlYjBhOGExNGQ0NzI0ZDY4YjFkOWM4MzEwNjI3'
+         });
+         console.log('after 30 sec inbound params: ', params);
+
+         plivoApiT.get_cdr(params, function (status, response) {
+            console.log('inboundCall get_cdr Status: ', status);
+            console.log('inboundCall get_cdr API Response:\n', response);
+         });
+
+         plivoApiT.get_live_call(params, function (status, response) {
+            console.log('inboundCall get_live_call Status: ', status);
+            console.log('inboundCall get_live_call API Response:\n', response);
+         });
+
+         plivoApiT.get_live_calls({}, function (status, response) {
+            console.log('inboundCall get_live_calls Status: ', status);
+            console.log('inboundCall get_live_calls API Response:\n', response);
+         });
+      }, 30000)
+
+
    } else {
       outboundCall(request, response);
    }
@@ -134,7 +171,7 @@ function inboundCall(request, response) {
 
 function outboundCall(request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   writeLog('receive_customer_call: ', data);
+   writeLog('receive_customer_call outboundCall: ', data);
    var from = data.From;
    var to = data.To;
    var r = plivo.Response();
