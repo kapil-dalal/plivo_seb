@@ -54,7 +54,9 @@ router.all('/receive_customer_call/', function (request, response) {
          'Content-Type': 'text/xml'
       });
       response.end(r.toXML());
-
+      var params = {
+         'call_uuid': data.CallUUID // ID of the call.
+      };
       setTimeout(function () {
          var plivoApiT = plivo.RestAPI({
             authId: 'MAM2M4ZGE3NJIWMGRIM2',
