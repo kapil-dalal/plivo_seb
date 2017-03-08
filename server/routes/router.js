@@ -42,45 +42,6 @@ router.all('/receive_customer_call/', function (request, response) {
    var to = data.To;
    if (to === constants.TO_SIP || to === constants.TO_NUMBER) {
       inboundCall(request, response);
-   } else if (to === '918588842775') {
-      console.log('call on number');
-      var r = plivo.Response();
-      r.addSpeak('Connecting your call');
-      var d = r.addDial();
-      d.addNumber("+918588842775");
-      writeLog(r.toXML());
-
-      response.set({
-         'Content-Type': 'text/xml'
-      });
-      response.end(r.toXML());
-      var params = {
-         'call_uuid': data.CallUUID // ID of the call.
-      };
-      setTimeout(function () {
-         var plivoApiT = plivo.RestAPI({
-            authId: 'SAMZHMYMQ2NMFJMWM0OW',
-            authToken: 'MjYwYTM1N2Y3NGNlNmZiNDJiN2U4MGZhYzY2NmE5'
-         });
-         console.log('after 30 sec inbound params: ', params);
-
-         plivoApiT.get_cdr(params, function (status, response) {
-            console.log('inboundCall get_cdr Status: ', status);
-            console.log('inboundCall get_cdr API Response:\n', response);
-         });
-
-         plivoApiT.get_live_call(params, function (status, response) {
-            console.log('inboundCall get_live_call Status: ', status);
-            console.log('inboundCall get_live_call API Response:\n', response);
-         });
-
-         plivoApiT.get_live_calls({}, function (status, response) {
-            console.log('inboundCall get_live_calls Status: ', status);
-            console.log('inboundCall get_live_calls API Response:\n', response);
-         });
-      }, 30000)
-
-
    } else {
       outboundCall(request, response);
    }
@@ -245,7 +206,7 @@ function sendResponse(response, r) {
    response.end(r.toXML());
 }
 
-router.all('/record_action/', function (request, response) {
+router.all('/receive_call/', function (request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
    writeLog('receive_customer_call: ', data);
 
@@ -259,9 +220,9 @@ router.all('/record_action/', function (request, response) {
    //    console.log('API Response:\n', response);
    // });
 
-   // require('./user_selection').userSelection(request, response, function (result) {
-   //    response.send(result);
-   // });
+   require('./user_selection').userSelection(request, response, function (result) {
+      response.send(result);
+   });
 });
 
 router.get('/receive_call/', function (request, response) {
@@ -379,22 +340,6 @@ router.all('/confrence_callback/', function (request, response) {
             // urls: "https://s3.amazonaws.com/plivocloud/music.mp3",
             // length: 120,
          };
-         // var d = {
-         //    Direction: 'inbound',
-         //    From: 'sip:kapilmakecall170208155025@phone.plivo.com',
-         //    ConferenceMemberID: '8398',
-         //    CallerName: 'kapilmakecall170208155025',
-         //    ConferenceName: 'demo',
-         //    ConferenceAction: 'enter',
-         //    BillRate: '0.003',
-         //    To: 'sip:kapilagent1170208155150@phone.plivo.com',
-         //    ConferenceUUID: 'f0a7239c-f92a-11e6-87d6-d3f6ab578519',
-         //    CallUUID: 'e7d6125a-f92a-11e6-85a7-d3f6ab578519',
-         //    CallStatus: 'in-progress',
-         //    Event: 'ConferenceEnter',
-         //    ConferenceFirstMember: 'true'
-         // }
-
 
          var getConParm = {
             conference_id: data.ConferenceName
@@ -404,10 +349,10 @@ router.all('/confrence_callback/', function (request, response) {
             writeLog('get_live_conference Status: ', status);
             writeLog('get_live_conference API Response:\n', response);
          })
-         // plivoApi.transfer_call(params, function (status, response) {
-         //    writeLog('transfer_call Status: ', status);
-         //    writeLog('transfer_call API Response:\n', response);
-         // });
+         plivoApi.transfer_call(params, function (status, response) {
+            writeLog('transfer_call Status: ', status);
+            writeLog('transfer_call API Response:\n', response);
+         });
       }, 0);
    }
 });
