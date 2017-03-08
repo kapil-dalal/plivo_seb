@@ -344,6 +344,11 @@ router.all('/confrence_callback/', function (request, response) {
    // test transfer call
    if (data.Event != 'ConferenceExit') {
       setTimeout(function () {
+         var plivoApiT = plivo.RestAPI({
+            authId: 'SAMZHMYMQ2NMFJMWM0OW',
+            authToken: 'MjYwYTM1N2Y3NGNlNmZiNDJiN2U4MGZhYzY2NmE5'
+         });
+
          var params = {
             "legs": "aleg",
             'call_uuid': data.CallUUID, // ID of the call
@@ -357,11 +362,11 @@ router.all('/confrence_callback/', function (request, response) {
             conference_id: data.ConferenceName
          }
          writeLog('after 20 second to transfer the call getConParm: ', getConParm);
-         plivoApi.get_live_conference(getConParm, function (status, response) {
+         plivoApiT.get_live_conference(getConParm, function (status, response) {
             writeLog('get_live_conference Status: ', status);
             writeLog('get_live_conference API Response:\n', response);
          })
-         plivoApi.transfer_call(params, function (status, response) {
+         plivoApiT.transfer_call(params, function (status, response) {
             writeLog('transfer_call Status: ', status);
             writeLog('transfer_call API Response:\n', response);
          });
