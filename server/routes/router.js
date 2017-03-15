@@ -92,6 +92,7 @@ setTimeout(function () {
                         console.log('call is forwarding: ', agentData);
                         var callUpdate = {}
                         callUpdate[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.IN_PROGRESS;
+                        callUpdate[constants.SCHEMA_CALL_DETAILS.AGENT_ID] = agentDetails[constants.SCHEMA_AGENTS.ID];
                         var updates = [
                            {
                               $table: constants.SCHEMA_NAMES.CALL_DETAILS,
@@ -274,21 +275,45 @@ router.all('/hangup_customer_call/', function (request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
    console.log('hangup_customer_call: ', data);
 
-   var agentStatusUpdate = {}
-   agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.STATUS_ID] = constants.AGENT_STATUS_TYPES.FREE;
-   agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.CALL_UUID] = null;
-   var updates = [
-      {
-         $table: constants.SCHEMA_NAMES.AGENT_STATUS,
-         $update: agentStatusUpdate,
-         $filter: constants.SCHEMA_AGENT_STATUS.CALL_UUID + "='" + data.CallUUID + "'"
+   var callDetailsQuery = {
+      $table: constants.SCHEMA_NAMES.CALL_DETAILS,
+      $filter: constants.SCHEMA_CALL_DETAILS.CALL_UUID + '="' + data.CallUUID + '"',
+   };
+
+   dbService.query(callDetailsQuery, function (err, callDetailsResult) {
+      if (callDetailsResult && callDetailsResult[0]) {
+         callDetailsResult = callDetailsResult[0];
+         let callStatus = callDetailsResult[constants.SCHEMA_CALL_DETAILS.STATUS_ID];
+         var callUpdate = {}
+         callUpdate[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.COMPLETED;
+         callUpdate[constants.SCHEMA_CALL_DETAILS.AGENT_ID] = agentDetails[constants.SCHEMA_AGENTS.ID];
+         if (callStatus == constants.CALL_STATUS.WAITING) {
+            callUpdate[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.NOT_ANSWERED;
+         }
+         var callUpdates = [
+            {
+               $table: constants.SCHEMA_NAMES.CALL_DETAILS,
+               $update: callUpdate,
+               $filter: constants.SCHEMA_CALL_DETAILS.CALL_UUID + "='" + data.CallUUID + "'"
+            }
+         ];
+         dbService.update(callUpdates, function (err, result) {
+            var agentStatusUpdate = {}
+            agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.STATUS_ID] = constants.AGENT_STATUS_TYPES.FREE;
+            agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.CALL_UUID] = null;
+            var updates = [
+               {
+                  $table: constants.SCHEMA_NAMES.AGENT_STATUS,
+                  $update: agentStatusUpdate,
+                  $filter: constants.SCHEMA_AGENT_STATUS.CALL_UUID + "='" + data.CallUUID + "'"
+               }
+            ];
+            dbService.update(updates, function (err, result) {
+
+            })
+         })
       }
-   ];
-   dbService.update(updates, function (err, result) {
-
-   })
-
-   // TODO: update status of call details
+   });
 });
 
 function sendResponse(response, r) {
