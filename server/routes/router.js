@@ -217,9 +217,10 @@ function outboundCall(request, response) {
             dbService.insert(callDetails, function (err, callDetailsResult) {
                if (err) {
                   console.log('confrence_callback callDetails err: ', err);
+               } else {
+                  console.log('confrence_callback callDetailsResult: ', callDetailsResult);
                }
             })
-            console.log('confrence_callback callDetailsResult: ', callDetailsResult);
             var agentStatusUpdate = {}
             agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.STATUS_ID] = constants.AGENT_STATUS_TYPES.ENGAGED;
             agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.CALL_UUID] = data.CallUUID;
