@@ -237,47 +237,76 @@ router.get('/receive_call/', function (request, response) {
 function outboundCall(request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
    writeLog('receive_customer_call outboundCall: ', data);
-   var from = data.From;
-   var to = data.To;
-   var r = plivo.Response();
+
    var errorMsg = "Something happen wrong. please try after some time";
    var connectingMessage = "connecting your call.";
-   try {
-      var query = { $table: constants.SCHEMA_NAMES.AGENTS, $filter: constants.SCHEMA_AGENTS.SIP + ' = "' + from + '"' };
-      dbService.query(query, function (err, result) {
-         if (err) {
-            r.addSpeak(errorMsg);
-            sendResponse(response, r);
-            return;
-         }
-         result = result[0];
-         if (result) {
-            var agentStatusUpdate = {}
-            agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.STATUS_ID] = constants.AGENT_STATUS_TYPES.ENGAGED;
-            agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.CALL_UUID] = data.CallUUID;
-            var updates = [
-               {
-                  $table: constants.SCHEMA_NAMES.AGENT_STATUS,
-                  $update: agentStatusUpdate,
-                  $filter: constants.SCHEMA_AGENT_STATUS.AGENT_ID + "='" + data.CallUUID + "'"
-               }
-            ];
-            dbService.update(updates, function (err, result) {
 
-            })
-            r.addSpeak(connectingMessage);
-            var d = r.addDial();
-            d.addNumber(to);
-            sendResponse(response, r);
-         } else {
+   var callDetailData = {};
+   callDetailData[constants.SCHEMA_CALL_DETAILS.FROM_CUSTOMER_ID] = data.To;
+   callDetailData[constants.SCHEMA_CALL_DETAILS.CALL_UUID] = data.CallUUID;
+   callDetailData[constants.SCHEMA_CALL_DETAILS.DIRECTION] = constants.CALL_TYPES.OUTBOUND;
+   callDetailData[constants.SCHEMA_CALL_DETAILS.DATE] = new Date();
+   callDetailData[constants.SCHEMA_CALL_DETAILS.JOIN_TIME] = constants.formatDate(new Date()).time;
+   callDetailData[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.IN_PROGRESS;
+   var callDetails = [
+      {
+         $table: constants.SCHEMA_NAMES.CALL_DETAILS,
+         $insert: [
+            callDetailData
+         ]
+      }
+   ];
+   console.log('outboundCall callDetails: ' + JSON.stringify(callDetails));
+   dbService.insert(callDetails, function (err, callDetailsResult) {
+      if (err) {
+         // TODO: disconnect the call
+         console.log('confrence_callback callDetails err: ', err);
+         r.addSpeak(errorMsg);
+         sendResponse(response, r);
+      } else {
+         console.log('confrence_callback callDetailsResult: ', callDetailsResult);
+         var from = data.From;
+         var to = data.To;
+         var r = plivo.Response();
+
+         try {
+            var query = { $table: constants.SCHEMA_NAMES.AGENTS, $filter: constants.SCHEMA_AGENTS.SIP + ' = "' + from + '"' };
+            dbService.query(query, function (err, result) {
+               if (err) {
+                  r.addSpeak(errorMsg);
+                  sendResponse(response, r);
+                  return;
+               }
+               result = result[0];
+               if (result) {
+                  var agentStatusUpdate = {}
+                  agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.STATUS_ID] = constants.AGENT_STATUS_TYPES.ENGAGED;
+                  agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.CALL_UUID] = data.CallUUID;
+                  var updates = [
+                     {
+                        $table: constants.SCHEMA_NAMES.AGENT_STATUS,
+                        $update: agentStatusUpdate,
+                        $filter: constants.SCHEMA_AGENT_STATUS.AGENT_ID + "='" + data.CallUUID + "'"
+                     }
+                  ];
+                  dbService.update(updates, function (err, result) {
+
+                  })
+                  r.addSpeak(connectingMessage);
+                  var d = r.addDial();
+                  d.addNumber(to);
+                  sendResponse(response, r);
+               } else {
+                  r.addSpeak(errorMsg);
+                  sendResponse(response, r);
+               }
+            });
+         } catch (err) {
             r.addSpeak(errorMsg);
             sendResponse(response, r);
          }
-      });
-   } catch (err) {
-      r.addSpeak(errorMsg);
-      sendResponse(response, r);
-   }
+      }
+   })
 }
 
 function sendResponse(response, r) {
@@ -394,59 +423,6 @@ router.all('/confrence_callback/', function (request, response) {
    }
 });
 
-// function inboundCall(callUuid, sip) {
-//    try {
-//       if (!sip) {
-//          agentStatus.getFreeAgent(function (err, agentDetail) {
-//             if (err) {
-//                writeLog('get free agent error: ', err);
-//                // TODO: hangup the call/conference
-//             } else {
-//                if (agentDetail) {
-//                   agentStatus.updateAgentStatusagentDetails(agentDetail[constants.SCHEMA_AGENTS.ID], constants.AGENT_STATUS_TYPES.ENGAGED, callUuid, function () {
-//                      if (err) {
-//                         writeLog('get free agent error: ', err);
-//                         // TODO: hangup the call/conference
-//                      } else {
-//                         writeLog('call is forwarding: ', agentDetail);
-//                         transferCall(callUuid, agentDetail[constants.SCHEMA_AGENTS.SIP]);
-//                      }
-//                   })
-//                }
-//             }
-//          });
-//       } else {
-//          transferCall(callUuid, sip);
-//       }
-//    } catch (err) {
-//       writeLog('receive_customer_call error: ', err);
-//       // TODO: hangup the call/conference
-//    }
-// }
-
-// router.all('/user_selection/:to', function (request, response) {
-//    require('./user_selection').userSelection(request, response, function (result) {
-//       response.set({
-//          'Content-Type': 'text/xml'
-//       });
-//       response.send(result);
-//    });
-// });
-
-// router.get('/forward_call/', function (req, res) {
-//    writeLog('call is forwarding');
-//    var r = plivo.Response();
-//    r.addSpeak('Connecting your call');
-//    var d = r.addDial();
-//    d.addNumber("+918588842775");
-//    writeLog(r.toXML());
-
-//    res.set({
-//       'Content-Type': 'text/xml'
-//    });
-//    res.end(r.toXML());
-// });
-
 router.all('/custom_ringing_tone/', function (request, response) {
    var r = plivo.Response();
 
@@ -501,59 +477,6 @@ router.all('/play/', function (request, response) {
    response.send();
 });
 
-// router.get('/speak/', function (request, response) {
-//    // Generate a Speak XML with the details of the text to play on the call.
-//    var r = plivo.Response();
-//    writeLog('get /speak/ received');
-//    r.addSpeak('Hello, you just received your first call');
-//    writeLog(r.toXML());
-//    writeLog('API Response:\n', response);
-//    response.set({ 'Content-Type': 'text/xml' });
-//    response.send(r.toXML());
-// });
-
 function writeLog(log1, log2) {
    // console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
 }
-
-
-
-// writeLog('request: ', request.query);
-// var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-
-// var r = plivo.Response();
-// var getdigits_action_url, params, getDigits;
-// getdigits_action_url = request.protocol + '://' + request.headers.host + '/user_selection/' + data.To;
-// params = {
-//    'action': getdigits_action_url,
-//    'method': 'POST',
-//    'timeout': '7',
-//    'numDigits': '1',
-//    'retries': '1'
-// };
-// getDigits = r.addGetDigits(params);
-// getDigits.addSpeak(IVR_MESSAGE1);
-// r.addSpeak(NO_INPUT_MESSAGE);
-// params_wait = {
-//    'length': "1"
-// };
-// r.addWait(params_wait);
-
-// router.all('/user_selection/', function (request, response) {
-//    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-//    writeLog('receive_customer_call: ', data);
-
-//    // var params = {
-//    //    'call_uuid': '55309cee-821d-11e4-9a73-498d468c930b' // ID of the call.
-//    // };
-
-//    // // Prints the complete response
-//    // plivoApi.get_cdr(params, function (status, response) {
-//    //    console.log('Status: ', status);
-//    //    console.log('API Response:\n', response);
-//    // });
-
-//    require('./user_selection').userSelection(request, response, function (result) {
-//       response.send(result);
-//    });
-// });
