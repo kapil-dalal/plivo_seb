@@ -49,6 +49,7 @@ setTimeout(function () {
          }
       });
    }
+   transferCallsToFreeAgents();
 }, 10000);
 
 router.get('/make_call', function (req, res) {
