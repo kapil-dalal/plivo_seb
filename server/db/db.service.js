@@ -410,7 +410,7 @@ function update(updates, callback) {
 }
 
 function writeLog(log1, log2) {
-   console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
+   // console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
 }
 
 // var ins = [{ $table: 'tab', $insert: [{ column1: 'value1' }, { column2: 'value2' }] }];

@@ -213,12 +213,9 @@ function outboundCall(request, response) {
                   ]
                }
             ];
-            console.log('outboundCall callDetails: ' + JSON.stringify(callDetails));
             dbService.insert(callDetails, function (err, callDetailsResult) {
                if (err) {
                   console.log('confrence_callback callDetails err: ', err);
-               } else {
-                  console.log('confrence_callback callDetailsResult: ', callDetailsResult);
                }
             })
             var agentStatusUpdate = {}
@@ -261,7 +258,6 @@ router.all('/hangup_customer_call/', function (request, response) {
    response.end('');
 
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   console.log('hangup_customer_call: ', data);
 
    var callDetailsQuery = {
       $table: constants.SCHEMA_NAMES.CALL_DETAILS,
@@ -328,7 +324,7 @@ function addCallToConference(request, response, data) {
 
 router.all('/confrence_callback/', function (request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   console.log('call on uri /confrence_callback/ to hold call data: ', data);
+   // console.log('call on uri /confrence_callback/ to hold call data: ', data);
    response.set({
       'Content-Type': 'text/xml'
    });
@@ -350,13 +346,12 @@ router.all('/confrence_callback/', function (request, response) {
             ]
          }
       ];
-      console.log('callDetails: ' + JSON.stringify(callDetails));
       dbService.insert(callDetails, function (err, callDetailsResult) {
          if (err) {
             // TODO: disconnect the call
             console.log('confrence_callback callDetails err: ', err);
          } else {
-            console.log('confrence_callback callDetailsResult: ', callDetailsResult);
+            // console.log('confrence_callback callDetailsResult: ', callDetailsResult);
          }
       })
    } else {
@@ -390,6 +385,17 @@ router.all('/dial/:sip', function (request, response) {
       'dialMusic': request.protocol + '://' + request.headers.host + "/custom_ringing_tone/"
    };
    var r = plivo.Response();
+
+   var record_params = {
+      'action': 'https://35.165.241.189:3010/record_action/', // Submit the result of the record to this URL
+      'method': "GET", // HTTP method to submit the action URL
+      // 'callbackUrl': "https://intense-brook-8241.herokuapp.com/record_callback/", // If set, this URL is fired in background when the recorded file is ready to be used.
+      // 'callbackMethod': "GET" // Method used to notify the callbackUrl.
+   }
+
+   r.addRecord(record_params)
+
+
    var dial_element = r.addDial(params);
    dial_element.addUser(mySIP);
    var xml = r.toXML();
@@ -398,6 +404,23 @@ router.all('/dial/:sip', function (request, response) {
       'Content-Type': 'text/xml'
    });
    response.end(xml);
+});
+
+router.all('/record_action/', function (request, response) {
+   var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
+   console.log('/record_action/ data: ', data);
+
+   var record_url = request.param('RecordUrl');
+   var record_duration = request.param('RecordingDuration');
+   var record_id = request.param('RecordingID');
+
+   console.log('Record Url : ' + record_url + ' Recording Duration : ' + record_duration + ' Recording ID : ' + record_id);
+
+   response.set({
+      'Content-Type': 'text/xml'
+   });
+   response.send();
+
 });
 
 router.all('/play/', function (request, response) {
