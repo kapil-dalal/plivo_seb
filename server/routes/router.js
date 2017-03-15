@@ -34,12 +34,12 @@ setTimeout(function () {
          if (err) {
             console.log('callDetailsQuery error: ', err);
          } else {
-            console.log('callDetailsQuery rewult: ', callDetailsResult);
+            console.log('callDetailsQuery result: ', callDetailsResult);
             dbService.query(freeAgentQuery, function (err, freeAgentResult) {
                if (err) {
                   console.log('freeAgentQuery error: ', err);
                } else {
-                  console.log('freeAgentQuery rewult: ', freeAgentResult);
+                  console.log('freeAgentQuery result: ', freeAgentResult);
                   setTimeout(function () {
                      console.log('calling again transfer call');
                      transferCallsToFreeAgents();
@@ -258,7 +258,7 @@ router.all('/confrence_callback/', function (request, response) {
    // TODO: create new call record with status waiting
    var callDetailData = {};
    callDetailData[constants.SCHEMA_CALL_DETAILS.FROM_CUSTOMER_ID] = data.To;
-   callDetailData[constants.SCHEMA_CALL_DETAILS.CALL_UUID] = data.CallUUID;
+   callDetailData[constants.SCHEMA_CALL_DETAILS.UUID] = data.CallUUID;
    callDetailData[constants.SCHEMA_CALL_DETAILS.DIRECTION] = constants.CALL_TYPES.INBOUND;
    callDetailData[constants.SCHEMA_CALL_DETAILS.DATE] = new Date();
    callDetailData[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.WAITING;
@@ -275,6 +275,7 @@ router.all('/confrence_callback/', function (request, response) {
       dbService.insert(callDetails, function (err, callDetailsResult) {
          if (err) {
             // TODO: disconnect the call
+            console.log('confrence_callback callDetails err: ', err);
          } else {
             console.log('confrence_callback callDetailsResult: ', callDetailsResult);
          }
