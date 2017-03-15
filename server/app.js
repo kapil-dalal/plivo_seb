@@ -69,7 +69,7 @@ wsServer.on('request', function (request) {
             connection.userId = fromAgentId;
             userConnections[fromAgentId] = connection;
 
-            agentStatus.updateAgentStatusagentDetails(fromAgentId, constants.AGENT_STATUS_TYPE.FREE, null, function () {
+            agentStatus.updateAgentStatusagentDetails(fromAgentId, constants.AGENT_STATUS_TYPES.FREE, null, function () {
 
             });
             // var connObject = userConnections[fromUserId];
