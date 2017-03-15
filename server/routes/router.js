@@ -18,7 +18,7 @@ var NO_INPUT_MESSAGE = "Sorry, I didn't catch that. Please hangup and try again 
 
 setTimeout(function () {
    console.log('router js');
-   function transferCallsToFreeAgents() {
+   function getWaitingCallsAndFreeAgents() {
       var callDetailsQuery = {
          $table: constants.SCHEMA_NAMES.CALL_DETAILS,
          $filter: constants.SCHEMA_CALL_DETAILS.STATUS_ID + '="' + constants.CALL_STATUS.WAITING + '"',
@@ -40,16 +40,96 @@ setTimeout(function () {
                   console.log('freeAgentQuery error: ', err);
                } else {
                   console.log('freeAgentQuery result: ', freeAgentResult);
-                  setTimeout(function () {
-                     console.log('calling again transfer call');
-                     transferCallsToFreeAgents();
-                  }, 10000);
+
+                  transferCallToAgents(0, callDetailsResult, freeAgentResult, function () {
+                     if (callDetailsResult && freeAgentResult && callDetailsResult.length > 0 && callDetailsResult.length == freeAgentResult.length) {
+                        getWaitingCallsAndFreeAgents();
+                     } else {
+                        setTimeout(function () {
+                           console.log('calling again transfer call');
+                           getWaitingCallsAndFreeAgents();
+                        }, 5000);
+                     }
+                  })
                }
             })
          }
       });
    }
-   transferCallsToFreeAgents();
+   getWaitingCallsAndFreeAgents();
+
+   function transferCallToAgents(i, callDetailsResult, freeAgentResult, cb) {
+      if (!callDetailsResult)
+         callDetailsResult = [];
+      if (!freeAgentResult)
+         freeAgentResult = [];
+      var callData = callDetailsResult[i];
+      if (callData) {
+         var callUuid = callData[constants.SCHEMA_CALL_DETAILS.CALL_UUID];
+         var agentData = freeAgentResult[0];
+         if (agentData) {
+            freeAgentResult.splice(0, 1);
+
+            var agentDetailQuerys = {
+               $table: constants.SCHEMA_NAMES.AGENTS,
+               $filter: constants.SCHEMA_AGENTS.ID + '="' + agentData[constants.SCHEMA_AGENT_STATUS.AGENT_ID] + '"',
+            };
+            dbService.query(agentDetailQuerys, function (err, agentDetails) {
+               agentDetails = agentDetails[0];
+               if (agentDetails) {
+                  var sip = agentDetails[constants.SCHEMA_AGENTS.SIP];
+                  transferCall(callUuid, sip);
+                  agentStatus.updateAgentStatusagentDetails(agentDetails[constants.SCHEMA_AGENTS.ID], constants.AGENT_STATUS_TYPES.ENGAGED, callUuid, function () {
+                     if (err) {
+                        console.log('updateAgentStatusagentDetails error: ', err);
+                        if (callDetailsResult.length > i) {
+                           i++;
+                           transferCallToAgents(i, callDetailsResult, freeAgentResult, cb);
+                        } else {
+                           cb();
+                        }
+                     } else {
+                        console.log('call is forwarding: ', agentData);
+                        var callUpdate = {}
+                        callUpdate[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.IN_PROGRESS;
+                        var updates = [
+                           {
+                              $table: constants.SCHEMA_NAMES.CALL_DETAILS,
+                              $update: callUpdate,
+                              $filter: constants.SCHEMA_CALL_DETAILS.CALL_UUID + "='" + callUuid + "'"
+                           }
+                        ];
+                        dbService.update(updates, function (err, result) {
+                           if (callDetailsResult.length > i) {
+                              i++;
+                              transferCallToAgents(i, callDetailsResult, freeAgentResult, cb);
+                           } else {
+                              cb();
+                           }
+                        })
+                     }
+                  })
+               } else {
+                  if (callDetailsResult.length > i) {
+                     i++;
+                     transferCallToAgents(i, callDetailsResult, freeAgentResult, cb);
+                  } else {
+                     cb();
+                  }
+               }
+            });
+         } else {
+            cb();
+         }
+      } else {
+         if (callDetailsResult.length > i) {
+            i++;
+            transferCallToAgents(i, callDetailsResult, freeAgentResult, cb);
+         } else {
+            cb();
+         }
+      }
+   }
 }, 10000);
 
 router.get('/make_call', function (req, res) {
@@ -258,7 +338,7 @@ router.all('/confrence_callback/', function (request, response) {
    // TODO: create new call record with status waiting
    var callDetailData = {};
    callDetailData[constants.SCHEMA_CALL_DETAILS.FROM_CUSTOMER_ID] = data.To;
-   callDetailData[constants.SCHEMA_CALL_DETAILS.UUID] = data.CallUUID;
+   callDetailData[constants.SCHEMA_CALL_DETAILS.CALL_UUID] = data.CallUUID;
    callDetailData[constants.SCHEMA_CALL_DETAILS.DIRECTION] = constants.CALL_TYPES.INBOUND;
    callDetailData[constants.SCHEMA_CALL_DETAILS.DATE] = new Date();
    callDetailData[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.WAITING;
@@ -357,12 +437,13 @@ router.all('/custom_ringing_tone/', function (request, response) {
 
 });
 
-router.all('/dial/', function (request, response) {
+router.all('/dial/:sip', function (request, response) {
    writeLog('call on uri /dial/');
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   writeLog('/dial/ to hold call data: ', data);
+   writeLog('/dial/ data: ', data);
 
-   var mySIP = 'sip:agent1170223182308@phone.plivo.com';
+   var mySIP = request.param('sip'); //'sip:agent1170223182308@phone.plivo.com';
+   writeLog('/dial/ to call sip: ', mySIP);
    var r = plivo.Response();
    var dial_element = r.addDial();
    dial_element.addUser(mySIP);
@@ -405,7 +486,7 @@ router.get('/speak/', function (request, response) {
 });
 
 function writeLog(log1, log2) {
-   // console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
+   console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
 }
 
 

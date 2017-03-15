@@ -43,7 +43,7 @@ function updateAgentStatusagentDetails(agentId, status, callId, cb) {
       {
          $table: constants.SCHEMA_NAMES.AGENT_STATUS,
          $update: agentUpdate,
-         $filter: constants.SCHEMA_AGENT_STATUS.ID + "=" + agentId
+         $filter: constants.SCHEMA_AGENT_STATUS.AGENT_ID + "=" + agentId
       }
    ];
    dbService.update(updates, function (err, result) {
