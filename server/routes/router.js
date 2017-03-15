@@ -217,7 +217,7 @@ function addCallToConference(request, response, data) {
 
 router.all('/confrence_callback/', function (request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   writeLog('call on uri /confrence_callback/ to hold call data: ', data);
+   console.log('call on uri /confrence_callback/ to hold call data: ', data);
    response.set({
       'Content-Type': 'text/xml'
    });
@@ -237,7 +237,7 @@ router.all('/confrence_callback/', function (request, response) {
          ]
       }
    ];
-   console.log('callDetails: ', callDetails);
+   console.log('callDetails: ' + JSON.stringify(callDetails));
    // TODO: transfer call if agent is free
    // inboundCall(data.CallUUID);
 
@@ -359,7 +359,7 @@ router.get('/speak/', function (request, response) {
 });
 
 function writeLog(log1, log2) {
-   console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
+   // console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
 }
 
 

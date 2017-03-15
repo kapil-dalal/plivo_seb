@@ -51,6 +51,7 @@ app.controller('contactController', ["$scope", "$cookies", "httpService",
                console.log("controller createAgent response: ", response);
                $scope.isSession = true;
                initPlivo();
+               customerSessionPlivo = $cookies.get('customerSessionPlivo');
             },
             function (err) {
                console.log("controller createAgent err: ", err);
@@ -220,7 +221,7 @@ app.controller('contactController', ["$scope", "$cookies", "httpService",
 
       $scope.call = function () {
          if ($scope.makeCallTxt == "Call") {
-            var dest = $scope.sip;
+            var dest = customerSessionPlivo; // $scope.sip;
             console.log('dest: ', dest);
             if (dest && isNotEmpty(dest)) {
                $scope.statusTxt = 'Calling..';
