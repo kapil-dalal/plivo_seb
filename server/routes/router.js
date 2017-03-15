@@ -153,62 +153,6 @@ router.get('/make_call', function (req, res) {
 
 });
 
-// router.all('/receive_customer_call/', function (request, response) {
-//    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-//    writeLog('receive_customer_call: ', data);
-//    var from = data.From;
-//    if (from === constants.FROM_SIP || data.To === constants.TO_NUMBER) {
-//       inboundCallOld(request, response);
-//    } else {
-//       outboundCall(request, response);
-//    }
-
-// });
-
-// function inboundCallOld(request, response) {
-//    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-//    console.log('inbound data: ', data);
-
-//    var speakBusy = "All lines are busy. Please call after some time.";
-//    var speakForward = "Thanks for calling. We are forwarding call to our customer care support.";
-//    var speakError = "error got";
-//    try {
-//       var r = plivo.Response();
-//       agentStatus.getFreeAgent(function (err, agentDetail) {
-//          if (err) {
-//             writeLog('get free agent error: ', err);
-//             r.addSpeak(speakError);
-//             sendResponse(response, r);
-//          } else {
-//             if (agentDetail) {
-//                agentStatus.updateAgentStatusagentDetails(agentDetail[constants.SCHEMA_AGENTS.ID], constants.AGENT_STATUS_TYPES.ENGAGED, data.CallUUID, function () {
-//                   if (err) {
-//                      writeLog('get free agent error: ', err);
-//                      r.addSpeak(speakError);
-//                      sendResponse(response, r);
-//                   } else {
-//                      writeLog('call is forwarding: ', agentDetail);
-
-//                      transferCall(data, agentDetail);
-
-//                      r.addSpeak(speakForward);
-//                      writeLog('forward call xml: ', r.toXML());
-//                      sendResponse(response, r);
-//                   }
-//                })
-//             } else {
-//                r.addSpeak(speakBusy);
-//                sendResponse(response, r);
-//             }
-//          }
-//       });
-//    } catch (err) {
-//       writeLog('receive_customer_call error: ', err);
-//       r.addSpeak(speakError);
-//       sendResponse(response, r);
-//    }
-// }
-
 function transferCall(callUuid, sip) {
    var params = {
       "legs": "aleg",
@@ -241,72 +185,69 @@ function outboundCall(request, response) {
    var errorMsg = "Something happen wrong. please try after some time";
    var connectingMessage = "connecting your call.";
 
-   var callDetailData = {};
-   callDetailData[constants.SCHEMA_CALL_DETAILS.FROM_CUSTOMER_ID] = data.To;
-   callDetailData[constants.SCHEMA_CALL_DETAILS.CALL_UUID] = data.CallUUID;
-   callDetailData[constants.SCHEMA_CALL_DETAILS.DIRECTION] = constants.CALL_TYPES.OUTBOUND;
-   callDetailData[constants.SCHEMA_CALL_DETAILS.DATE] = new Date();
-   callDetailData[constants.SCHEMA_CALL_DETAILS.JOIN_TIME] = constants.formatDate(new Date()).time;
-   callDetailData[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.IN_PROGRESS;
-   var callDetails = [
-      {
-         $table: constants.SCHEMA_NAMES.CALL_DETAILS,
-         $insert: [
-            callDetailData
-         ]
-      }
-   ];
-   console.log('outboundCall callDetails: ' + JSON.stringify(callDetails));
-   dbService.insert(callDetails, function (err, callDetailsResult) {
-      if (err) {
-         // TODO: disconnect the call
-         console.log('confrence_callback callDetails err: ', err);
-         r.addSpeak(errorMsg);
-         sendResponse(response, r);
-      } else {
-         console.log('confrence_callback callDetailsResult: ', callDetailsResult);
-         var from = data.From;
-         var to = data.To;
-         var r = plivo.Response();
-
-         try {
-            var query = { $table: constants.SCHEMA_NAMES.AGENTS, $filter: constants.SCHEMA_AGENTS.SIP + ' = "' + from + '"' };
-            dbService.query(query, function (err, result) {
+   try {
+      var query = { $table: constants.SCHEMA_NAMES.AGENTS, $filter: constants.SCHEMA_AGENTS.SIP + ' = "' + from + '"' };
+      dbService.query(query, function (err, agentResult) {
+         if (err) {
+            r.addSpeak(errorMsg);
+            sendResponse(response, r);
+            return;
+         }
+         agentResult = agentResult[0];
+         if (agentResult) {
+            var callDetailData = {};
+            callDetailData[constants.SCHEMA_CALL_DETAILS.TO_CUSTOMER_NUMBER] = data.To;
+            callDetailData[constants.SCHEMA_CALL_DETAILS.CALL_UUID] = data.CallUUID;
+            callDetailData[constants.SCHEMA_CALL_DETAILS.DIRECTION] = constants.CALL_TYPES.OUTBOUND;
+            callDetailData[constants.SCHEMA_CALL_DETAILS.DATE] = constants.formatDate(new Date()).date;
+            callDetailData[constants.SCHEMA_CALL_DETAILS.JOIN_TIME] = constants.formatDate(new Date()).time;
+            callDetailData[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.IN_PROGRESS;
+            callDetailData[constants.SCHEMA_CALL_DETAILS.AGENTS] = agentResult[constants.SCHEMA_AGENTS.ID];
+            var callDetails = [
+               {
+                  $table: constants.SCHEMA_NAMES.CALL_DETAILS,
+                  $insert: [
+                     callDetailData
+                  ]
+               }
+            ];
+            console.log('outboundCall callDetails: ' + JSON.stringify(callDetails));
+            dbService.insert(callDetails, function (err, callDetailsResult) {
                if (err) {
-                  r.addSpeak(errorMsg);
-                  sendResponse(response, r);
-                  return;
+                  console.log('confrence_callback callDetails err: ', err);
                }
-               result = result[0];
-               if (result) {
-                  var agentStatusUpdate = {}
-                  agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.STATUS_ID] = constants.AGENT_STATUS_TYPES.ENGAGED;
-                  agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.CALL_UUID] = data.CallUUID;
-                  var updates = [
-                     {
-                        $table: constants.SCHEMA_NAMES.AGENT_STATUS,
-                        $update: agentStatusUpdate,
-                        $filter: constants.SCHEMA_AGENT_STATUS.AGENT_ID + "='" + data.CallUUID + "'"
-                     }
-                  ];
-                  dbService.update(updates, function (err, result) {
+            })
+            console.log('confrence_callback callDetailsResult: ', callDetailsResult);
+            var from = data.From;
+            var to = data.To;
+            var r = plivo.Response();
 
-                  })
-                  r.addSpeak(connectingMessage);
-                  var d = r.addDial();
-                  d.addNumber(to);
-                  sendResponse(response, r);
-               } else {
-                  r.addSpeak(errorMsg);
-                  sendResponse(response, r);
+            var agentStatusUpdate = {}
+            agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.STATUS_ID] = constants.AGENT_STATUS_TYPES.ENGAGED;
+            agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.CALL_UUID] = data.CallUUID;
+            var updates = [
+               {
+                  $table: constants.SCHEMA_NAMES.AGENT_STATUS,
+                  $update: agentStatusUpdate,
+                  $filter: constants.SCHEMA_AGENT_STATUS.AGENT_ID + "='" + data.CallUUID + "'"
                }
-            });
-         } catch (err) {
+            ];
+            dbService.update(updates, function (err, result) {
+
+            })
+            r.addSpeak(connectingMessage);
+            var d = r.addDial();
+            d.addNumber(to);
+            sendResponse(response, r);
+         } else {
             r.addSpeak(errorMsg);
             sendResponse(response, r);
          }
-      }
-   })
+      });
+   } catch (err) {
+      r.addSpeak(errorMsg);
+      sendResponse(response, r);
+   }
 }
 
 function sendResponse(response, r) {
@@ -397,7 +338,7 @@ router.all('/confrence_callback/', function (request, response) {
    callDetailData[constants.SCHEMA_CALL_DETAILS.FROM_CUSTOMER_ID] = data.To;
    callDetailData[constants.SCHEMA_CALL_DETAILS.CALL_UUID] = data.CallUUID;
    callDetailData[constants.SCHEMA_CALL_DETAILS.DIRECTION] = constants.CALL_TYPES.INBOUND;
-   callDetailData[constants.SCHEMA_CALL_DETAILS.DATE] = new Date();
+   callDetailData[constants.SCHEMA_CALL_DETAILS.DATE] = constants.formatDate(new Date()).date;
    callDetailData[constants.SCHEMA_CALL_DETAILS.JOIN_TIME] = constants.formatDate(new Date()).time;
    callDetailData[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.WAITING;
    if (data.ConferenceAction != "exit") {

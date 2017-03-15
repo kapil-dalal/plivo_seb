@@ -18,6 +18,7 @@ function createDB() {
       + " ( "
       + " id INT NOT NULL AUTO_INCREMENT, "
       + " from_customer_id INT, "
+      + " to_customer_number  VARCHAR(100), "
       + " uuid VARCHAR(100) NOT NULL, "
       + " record_url VARCHAR(100), "
       + " duration VARCHAR(100), "

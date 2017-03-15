@@ -96,6 +96,7 @@ var SCHEMA_CALL_STATUS_TYPES = {
 var SCHEMA_CALL_DETAILS = {
    ID: 'id',
    FROM_CUSTOMER_ID: 'from_customer_id',
+   TO_CUSTOMER_NUMBER: 'to_customer_number',
    CALL_UUID: 'uuid',
    RECORD_URL: 'record_url',
    DURATION: 'duration',
