@@ -185,6 +185,8 @@ function outboundCall(request, response) {
    var errorMsg = "Something happen wrong. please try after some time";
    var connectingMessage = "connecting your call.";
    var r = plivo.Response();
+   var from = data.From;
+   var to = data.To;
    try {
       var query = { $table: constants.SCHEMA_NAMES.AGENTS, $filter: constants.SCHEMA_AGENTS.SIP + ' = "' + from + '"' };
       dbService.query(query, function (err, agentResult) {
@@ -218,10 +220,6 @@ function outboundCall(request, response) {
                }
             })
             console.log('confrence_callback callDetailsResult: ', callDetailsResult);
-            var from = data.From;
-            var to = data.To;
-
-
             var agentStatusUpdate = {}
             agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.STATUS_ID] = constants.AGENT_STATUS_TYPES.ENGAGED;
             agentStatusUpdate[constants.SCHEMA_AGENT_STATUS.CALL_UUID] = data.CallUUID;
