@@ -212,7 +212,7 @@ function transferCall(callUuid, sip) {
    var params = {
       "legs": "aleg",
       'call_uuid': callUuid, // ID of the call
-      'aleg_url': request.protocol + '://' + request.headers.host + "/dial/" + sip + "/",
+      'aleg_url': 'https://35.165.241.189:3010/dial/' + sip + '/',
       'aleg_method': "GET"
    };
 
