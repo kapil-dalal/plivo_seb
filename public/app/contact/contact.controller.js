@@ -1,5 +1,5 @@
-app.controller('contactController', ["$scope", "$cookieStore", "httpService",
-   function ($scope, $cookies, httpService) {
+app.controller('contactController', ["$scope", "$cookies", '$window', "httpService",
+   function ($scope, $cookies, $window, httpService) {
       console.log('phoneController called');
       $scope.isSession = false;
       var customerSessionPlivo = $cookies.get('customerSessionPlivo');
@@ -51,7 +51,13 @@ app.controller('contactController', ["$scope", "$cookieStore", "httpService",
                console.log("controller createAgent response: ", response);
                $scope.isSession = true;
                initPlivo();
-               $cookies.put('customerSessionPlivo', response.data.customerId);
+
+               var now = new $window.Date();
+               var exp = new $window.Date(now.getFullYear(), now.getMonth() + 6, now.getDate());
+
+               $cookies.put('customerSessionPlivo', response.data.customerId, {
+                  expires: exp
+               });
             },
             function (err) {
                console.log("controller createAgent err: ", err);
