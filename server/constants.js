@@ -28,7 +28,7 @@ var AGENT_STATUS_TYPES = {
 }
 
 var SCHEMA_NAMES = {
-   USER_STATUS_TYPES: 'call_status_types',
+   CALL_STATUS_TYPES: 'call_status_types',
    CALL_DETAILS: 'call_details',
    USER_STATUS: 'user_status',
    AGENT_STATUS_TYPES: 'agent_status_types',

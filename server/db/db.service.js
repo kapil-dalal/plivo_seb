@@ -156,8 +156,6 @@ function createDB() {
       CALL_STATUS_TYPES_4
    ];
    var tablesNameList = [
-      "call_status_types",
-      "call_details",
       "user_status",
       "user_types",
       "agent_status_types",
@@ -165,6 +163,8 @@ function createDB() {
       "customers",
       "users",
       "agents",
+      "call_status_types",
+      "call_details",
       'USER_STATUS_DATA_1',
       'USER_STATUS_DATA_2',
       'USER_TYPE_DATA_1',
@@ -212,7 +212,7 @@ function createDB() {
 }
 
 // sample data to query
-// { $table: 'tab', $fields: ['col1', 'col2'], $filter: 'col3="fildata"' }
+// { $table: 'tab', $fields: ['col1', 'col2'], $filter: 'col3="fildata"', $limit: 1 }
 function query(queryObj, callback) {
    writeLog("call on query");
    if (!queryObj) {

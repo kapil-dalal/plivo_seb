@@ -18,7 +18,37 @@ var NO_INPUT_MESSAGE = "Sorry, I didn't catch that. Please hangup and try again 
 
 setTimeout(function () {
    console.log('router js');
+   function transferCallsToFreeAgents() {
+      var callDetailsQuery = {
+         $table: constants.SCHEMA_NAMES.CALL_DETAILS,
+         $filter: constants.SCHEMA_CALL_DETAILS.STATUS_ID + '="' + constants.CALL_STATUS.WAITING + '"',
+         $limit: 10
+      };
 
+      var freeAgentQuery = {
+         $table: constants.SCHEMA_NAMES.AGENT_STATUS,
+         $filter: constants.SCHEMA_AGENT_STATUS.STATUS_ID + '="' + constants.AGENT_STATUS_TYPES.FREE + '"',
+         $limit: 10
+      };
+      dbService.query(callDetailsQuery, function (err, callDetailsResult) {
+         if (err) {
+            console.log('callDetailsQuery error: ', err);
+         } else {
+            console.log('callDetailsQuery rewult: ', callDetailsResult);
+            dbService.query(freeAgentQuery, function (err, freeAgentResult) {
+               if (err) {
+                  console.log('freeAgentQuery error: ', err);
+               } else {
+                  console.log('freeAgentQuery rewult: ', freeAgentResult);
+                  setTimeout(function () {
+                     console.log('calling again transfer call');
+                     transferCallsToFreeAgents();
+                  }, 10000);
+               }
+            })
+         }
+      });
+   }
 }, 10000);
 
 router.get('/make_call', function (req, res) {
@@ -176,6 +206,8 @@ router.all('/hangup_customer_call/', function (request, response) {
    dbService.update(updates, function (err, result) {
 
    })
+
+   // TODO: update status of call details
 });
 
 function sendResponse(response, r) {
@@ -225,19 +257,31 @@ router.all('/confrence_callback/', function (request, response) {
    // TODO: create new call record with status waiting
    var callDetailData = {};
    callDetailData[constants.SCHEMA_CALL_DETAILS.FROM_CUSTOMER_ID] = data.To;
-   callDetailData[constants.SCHEMA_CALL_DETAILS.CALL_UUID] = data.callUuid;
+   callDetailData[constants.SCHEMA_CALL_DETAILS.CALL_UUID] = data.CallUUID;
    callDetailData[constants.SCHEMA_CALL_DETAILS.DIRECTION] = constants.CALL_TYPES.INBOUND;
    callDetailData[constants.SCHEMA_CALL_DETAILS.DATE] = new Date();
    callDetailData[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.WAITING;
-   var callDetails = [
-      {
-         $table: constants.SCHEMA_NAMES.CALL_DETAILS,
-         $insert: [
-            callDetailData
-         ]
-      }
-   ];
-   console.log('callDetails: ' + JSON.stringify(callDetails));
+   if (data.ConferenceAction != "exit") {
+      var callDetails = [
+         {
+            $table: constants.SCHEMA_NAMES.CALL_DETAILS,
+            $insert: [
+               callDetailData
+            ]
+         }
+      ];
+      console.log('callDetails: ' + JSON.stringify(callDetails));
+      dbService.insert(callDetails, function (err, callDetailsResult) {
+         if (err) {
+            // TODO: disconnect the call
+         } else {
+            console.log('confrence_callback callDetailsResult: ', callDetailsResult);
+         }
+      })
+   } else {
+      // TODO: update status of call
+   }
+
    // TODO: transfer call if agent is free
    // inboundCall(data.CallUUID);
 
