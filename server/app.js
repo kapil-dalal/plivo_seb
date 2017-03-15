@@ -62,14 +62,14 @@ wsServer.on('request', function (request) {
          var utfMessage = message.utf8Data;
          console.log('utfMessage: ' + utfMessage);
          var jsonData = JSON.parse(utfMessage);
-         var fromUserId = jsonData.from;
+         var fromAgentId = jsonData.from;
 
          if (jsonData.type == 'login') {
-            console.log('connections for user: ' + fromUserId);
-            connection.userId = fromUserId;
-            userConnections[fromUserId] = connection;
+            console.log('connections for user: ' + fromAgentId);
+            connection.userId = fromAgentId;
+            userConnections[fromAgentId] = connection;
 
-            agentStatus.updateAgentStatusagentDetails(fromUserId, constants.AGENT_STATUS_TYPE.FREE, null, function () {
+            agentStatus.updateAgentStatusagentDetails(fromAgentId, constants.AGENT_STATUS_TYPE.FREE, null, function () {
 
             });
             // var connObject = userConnections[fromUserId];
@@ -98,7 +98,7 @@ wsServer.on('request', function (request) {
    connection.on('close', function (detailId) {
       console.log('on connection closed: ', connection.userId);
       delete userConnections[connection.userId];
-      agentStatus.updateAgentStatusagentDetails(connection.userId, constants.AGENT_STATUS_TYPE.OFF_LINE, null, function () {
+      agentStatus.updateAgentStatusagentDetails(connection.userId, constants.AGENT_STATUS_TYPES.OFF_LINE, null, function () {
 
       });
       if (userConnections && Object.keys(userConnections).length > 0) {

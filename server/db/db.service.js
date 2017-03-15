@@ -7,6 +7,34 @@ var ER_TABLE_EXISTS_ERROR = "ER_TABLE_EXISTS_ERROR";
 /* GET home page. */
 
 function createDB() {
+   var CALL_STATUS_TYPES = "CREATE TABLE IF NOT EXISTS call_status_types"
+      + " ( "
+      + " id INT NOT NULL AUTO_INCREMENT UNIQUE, "
+      + " name VARCHAR(100) NOT NULL UNIQUE, "
+      + " PRIMARY KEY (id) "
+      + " );";
+
+   var CALL_DETAILS = "CREATE TABLE IF NOT EXISTS call_details"
+      + " ( "
+      + " id INT NOT NULL AUTO_INCREMENT, "
+      + " from_customer_id INT NOT NULL, "
+      + " uuid VARCHAR(100) NOT NULL, "
+      + " record_url VARCHAR(100) NOT NULL, "
+      + " duration VARCHAR(100), "
+      + " billed_duration VARCHAR(100), "
+      + " direction VARCHAR(100), "
+      + " join_time VARCHAR(100), "
+      + " end_time VARCHAR(100), "
+      + " date VARCHAR(100), "
+      + " amount VARCHAR(100), "
+      + " status_id INT NOT NULL, "
+      + " agent_id INT NOT NULL, "
+      + " PRIMARY KEY (id), "
+      + " FOREIGN KEY (from_customer_id) REFERENCES customers(id) ON DELETE NO ACTION ON UPDATE NO ACTION, "
+      + " FOREIGN KEY (agent_id) REFERENCES agents(id) ON DELETE NO ACTION ON UPDATE NO ACTION, "
+      + " FOREIGN KEY (status_id) REFERENCES call_status_types(id) ON DELETE NO ACTION ON UPDATE NO ACTION "
+      + " );";
+
    var USER_STATUS = "CREATE TABLE IF NOT EXISTS user_status"
       + " ( "
       + " id INT NOT NULL AUTO_INCREMENT UNIQUE, "
@@ -100,6 +128,11 @@ function createDB() {
    var AGENT_STATUS_TYPE_2 = "INSERT INTO agent_status_types(id, name) values(2, 'Engaged')";
    var AGENT_STATUS_TYPE_3 = "INSERT INTO agent_status_types(id, name) values(3, 'OffLine')";
 
+   var CALL_STATUS_TYPES_1 = "INSERT INTO call_status_types(id, name) values(1, 'Waiting')";
+   var CALL_STATUS_TYPES_2 = "INSERT INTO call_status_types(id, name) values(2, 'In Progress')";
+   var CALL_STATUS_TYPES_3 = "INSERT INTO call_status_types(id, name) values(3, 'Completed')";
+   var CALL_STATUS_TYPES_4 = "INSERT INTO call_status_types(id, name) values(4, 'Not Answered')";
+
    var allTables = [
       USER_STATUS,
       USER_TYPES,
@@ -108,15 +141,23 @@ function createDB() {
       CUSTOMERS,
       USERS,
       AGENTS,
+      CALL_STATUS_TYPES,
+      CALL_DETAILS,
       USER_STATUS_DATA_1,
       USER_STATUS_DATA_2,
       USER_TYPE_DATA_1,
       USER_TYPE_DATA_2,
       AGENT_STATUS_TYPE_1,
       AGENT_STATUS_TYPE_2,
-      AGENT_STATUS_TYPE_3
+      AGENT_STATUS_TYPE_3,
+      CALL_STATUS_TYPES_1,
+      CALL_STATUS_TYPES_2,
+      CALL_STATUS_TYPES_3,
+      CALL_STATUS_TYPES_4
    ];
    var tablesNameList = [
+      "call_status_types",
+      "call_details",
       "user_status",
       "user_types",
       "agent_status_types",
@@ -130,7 +171,11 @@ function createDB() {
       'USER_TYPE_DATA_2',
       'AGENT_STATUS_TYPE_1',
       'AGENT_STATUS_TYPE_2',
-      'AGENT_STATUS_TYPE_3'
+      'AGENT_STATUS_TYPE_3',
+      'CALL_STATUS_TYPE_1',
+      'CALL_STATUS_TYPE_2',
+      'CALL_STATUS_TYPE_3',
+      'CALL_STATUS_TYPE_4',
    ];
 
    sqlSingletonConnection.createSqlConnection(

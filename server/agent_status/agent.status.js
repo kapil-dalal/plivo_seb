@@ -4,7 +4,7 @@ var constants = require('../constants');
 function getFreeAgent(cb) {
    var agentStatusQuery = {
       $table: constants.SCHEMA_NAMES.AGENT_STATUS,
-      $filter: constants.SCHEMA_AGENT_STATUS.STATUS_ID + " = " + constants.AGENT_STATUS_TYPE.FREE,
+      $filter: constants.SCHEMA_AGENT_STATUS.STATUS_ID + " = " + constants.AGENT_STATUS_TYPES.FREE,
       $limit: 1
    };
    dbService.query(agentStatusQuery, function (err, agetntStatusResult) {
