@@ -17,7 +17,6 @@ var IVR_MESSAGE1 = "Welcome to the Plivo. Press 1 to forward the call. Press 2 t
 var NO_INPUT_MESSAGE = "Sorry, I didn't catch that. Please hangup and try again later.";
 
 setTimeout(function () {
-   console.log('router js');
    function getWaitingCallsAndFreeAgents() {
       var callDetailsQuery = {
          $table: constants.SCHEMA_NAMES.CALL_DETAILS,
@@ -165,49 +164,49 @@ router.get('/make_call', function (req, res) {
 
 // });
 
-function inboundCallOld(request, response) {
-   var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   console.log('inbound data: ', data);
+// function inboundCallOld(request, response) {
+//    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
+//    console.log('inbound data: ', data);
 
-   var speakBusy = "All lines are busy. Please call after some time.";
-   var speakForward = "Thanks for calling. We are forwarding call to our customer care support.";
-   var speakError = "error got";
-   try {
-      var r = plivo.Response();
-      agentStatus.getFreeAgent(function (err, agentDetail) {
-         if (err) {
-            writeLog('get free agent error: ', err);
-            r.addSpeak(speakError);
-            sendResponse(response, r);
-         } else {
-            if (agentDetail) {
-               agentStatus.updateAgentStatusagentDetails(agentDetail[constants.SCHEMA_AGENTS.ID], constants.AGENT_STATUS_TYPES.ENGAGED, data.CallUUID, function () {
-                  if (err) {
-                     writeLog('get free agent error: ', err);
-                     r.addSpeak(speakError);
-                     sendResponse(response, r);
-                  } else {
-                     writeLog('call is forwarding: ', agentDetail);
+//    var speakBusy = "All lines are busy. Please call after some time.";
+//    var speakForward = "Thanks for calling. We are forwarding call to our customer care support.";
+//    var speakError = "error got";
+//    try {
+//       var r = plivo.Response();
+//       agentStatus.getFreeAgent(function (err, agentDetail) {
+//          if (err) {
+//             writeLog('get free agent error: ', err);
+//             r.addSpeak(speakError);
+//             sendResponse(response, r);
+//          } else {
+//             if (agentDetail) {
+//                agentStatus.updateAgentStatusagentDetails(agentDetail[constants.SCHEMA_AGENTS.ID], constants.AGENT_STATUS_TYPES.ENGAGED, data.CallUUID, function () {
+//                   if (err) {
+//                      writeLog('get free agent error: ', err);
+//                      r.addSpeak(speakError);
+//                      sendResponse(response, r);
+//                   } else {
+//                      writeLog('call is forwarding: ', agentDetail);
 
-                     transferCall(data, agentDetail);
+//                      transferCall(data, agentDetail);
 
-                     r.addSpeak(speakForward);
-                     writeLog('forward call xml: ', r.toXML());
-                     sendResponse(response, r);
-                  }
-               })
-            } else {
-               r.addSpeak(speakBusy);
-               sendResponse(response, r);
-            }
-         }
-      });
-   } catch (err) {
-      writeLog('receive_customer_call error: ', err);
-      r.addSpeak(speakError);
-      sendResponse(response, r);
-   }
-}
+//                      r.addSpeak(speakForward);
+//                      writeLog('forward call xml: ', r.toXML());
+//                      sendResponse(response, r);
+//                   }
+//                })
+//             } else {
+//                r.addSpeak(speakBusy);
+//                sendResponse(response, r);
+//             }
+//          }
+//       });
+//    } catch (err) {
+//       writeLog('receive_customer_call error: ', err);
+//       r.addSpeak(speakError);
+//       sendResponse(response, r);
+//    }
+// }
 
 function transferCall(callUuid, sip) {
    var params = {
@@ -222,6 +221,17 @@ function transferCall(callUuid, sip) {
       writeLog('transfer_call API Response:\n', response);
    });
 }
+
+router.get('/receive_call/', function (request, response) {
+
+   var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
+   writeLog('receive_customer_call: ', data);
+   if (data.From === constants.FROM_SIP || data.To === constants.TO_NUMBER) {
+      addCallToConference(request, response, data);
+   } else {
+      outboundCall(request, response);
+   }
+});
 
 function outboundCall(request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
@@ -269,6 +279,13 @@ function outboundCall(request, response) {
    }
 }
 
+function sendResponse(response, r) {
+   response.set({
+      'Content-Type': 'text/xml'
+   });
+   response.end(r.toXML());
+}
+
 router.all('/hangup_customer_call/', function (request, response) {
    response.end('');
 
@@ -286,7 +303,7 @@ router.all('/hangup_customer_call/', function (request, response) {
          let callStatus = callDetailsResult[constants.SCHEMA_CALL_DETAILS.STATUS_ID];
          var callUpdate = {}
          callUpdate[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.COMPLETED;
-         callUpdate[constants.SCHEMA_CALL_DETAILS.AGENT_ID] = agentDetails[constants.SCHEMA_AGENTS.ID];
+         callUpdate[constants.SCHEMA_CALL_DETAILS.END_TIME] = constants.formatDate(new Date()).time;
          if (callStatus == constants.CALL_STATUS.WAITING) {
             callUpdate[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.NOT_ANSWERED;
          }
@@ -314,24 +331,6 @@ router.all('/hangup_customer_call/', function (request, response) {
          })
       }
    });
-});
-
-function sendResponse(response, r) {
-   response.set({
-      'Content-Type': 'text/xml'
-   });
-   response.end(r.toXML());
-}
-
-router.get('/receive_call/', function (request, response) {
-
-   var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
-   writeLog('receive_customer_call: ', data);
-   if (data.From === constants.FROM_SIP || data.To === constants.TO_NUMBER) {
-      addCallToConference(request, response, data);
-   } else {
-      outboundCall(request, response);
-   }
 });
 
 function addCallToConference(request, response, data) {
@@ -366,6 +365,7 @@ router.all('/confrence_callback/', function (request, response) {
    callDetailData[constants.SCHEMA_CALL_DETAILS.CALL_UUID] = data.CallUUID;
    callDetailData[constants.SCHEMA_CALL_DETAILS.DIRECTION] = constants.CALL_TYPES.INBOUND;
    callDetailData[constants.SCHEMA_CALL_DETAILS.DATE] = new Date();
+   callUpdate[constants.SCHEMA_CALL_DETAILS.JOIN_TIME] = constants.formatDate(new Date()).time;
    callDetailData[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.WAITING;
    if (data.ConferenceAction != "exit") {
       var callDetails = [
@@ -388,64 +388,60 @@ router.all('/confrence_callback/', function (request, response) {
    } else {
       // TODO: update status of call
    }
-
-   // TODO: transfer call if agent is free
-   // inboundCall(data.CallUUID);
-
 });
 
-function inboundCall(callUuid, sip) {
-   try {
-      if (!sip) {
-         agentStatus.getFreeAgent(function (err, agentDetail) {
-            if (err) {
-               writeLog('get free agent error: ', err);
-               // TODO: hangup the call/conference
-            } else {
-               if (agentDetail) {
-                  agentStatus.updateAgentStatusagentDetails(agentDetail[constants.SCHEMA_AGENTS.ID], constants.AGENT_STATUS_TYPES.ENGAGED, callUuid, function () {
-                     if (err) {
-                        writeLog('get free agent error: ', err);
-                        // TODO: hangup the call/conference
-                     } else {
-                        writeLog('call is forwarding: ', agentDetail);
-                        transferCall(callUuid, agentDetail[constants.SCHEMA_AGENTS.SIP]);
-                     }
-                  })
-               }
-            }
-         });
-      } else {
-         transferCall(callUuid, sip);
-      }
-   } catch (err) {
-      writeLog('receive_customer_call error: ', err);
-      // TODO: hangup the call/conference
-   }
-}
+// function inboundCall(callUuid, sip) {
+//    try {
+//       if (!sip) {
+//          agentStatus.getFreeAgent(function (err, agentDetail) {
+//             if (err) {
+//                writeLog('get free agent error: ', err);
+//                // TODO: hangup the call/conference
+//             } else {
+//                if (agentDetail) {
+//                   agentStatus.updateAgentStatusagentDetails(agentDetail[constants.SCHEMA_AGENTS.ID], constants.AGENT_STATUS_TYPES.ENGAGED, callUuid, function () {
+//                      if (err) {
+//                         writeLog('get free agent error: ', err);
+//                         // TODO: hangup the call/conference
+//                      } else {
+//                         writeLog('call is forwarding: ', agentDetail);
+//                         transferCall(callUuid, agentDetail[constants.SCHEMA_AGENTS.SIP]);
+//                      }
+//                   })
+//                }
+//             }
+//          });
+//       } else {
+//          transferCall(callUuid, sip);
+//       }
+//    } catch (err) {
+//       writeLog('receive_customer_call error: ', err);
+//       // TODO: hangup the call/conference
+//    }
+// }
 
-router.all('/user_selection/:to', function (request, response) {
-   require('./user_selection').userSelection(request, response, function (result) {
-      response.set({
-         'Content-Type': 'text/xml'
-      });
-      response.send(result);
-   });
-});
+// router.all('/user_selection/:to', function (request, response) {
+//    require('./user_selection').userSelection(request, response, function (result) {
+//       response.set({
+//          'Content-Type': 'text/xml'
+//       });
+//       response.send(result);
+//    });
+// });
 
-router.get('/forward_call/', function (req, res) {
-   writeLog('call is forwarding');
-   var r = plivo.Response();
-   r.addSpeak('Connecting your call');
-   var d = r.addDial();
-   d.addNumber("+918588842775");
-   writeLog(r.toXML());
+// router.get('/forward_call/', function (req, res) {
+//    writeLog('call is forwarding');
+//    var r = plivo.Response();
+//    r.addSpeak('Connecting your call');
+//    var d = r.addDial();
+//    d.addNumber("+918588842775");
+//    writeLog(r.toXML());
 
-   res.set({
-      'Content-Type': 'text/xml'
-   });
-   res.end(r.toXML());
-});
+//    res.set({
+//       'Content-Type': 'text/xml'
+//    });
+//    res.end(r.toXML());
+// });
 
 router.all('/custom_ringing_tone/', function (request, response) {
    var r = plivo.Response();
@@ -495,20 +491,19 @@ router.all('/play/', function (request, response) {
    //    writeLog('/play/ after request post call holeResponse: ', holeResponse);
    // });
 
-
    response.send();
 });
 
-router.get('/speak/', function (request, response) {
-   // Generate a Speak XML with the details of the text to play on the call.
-   var r = plivo.Response();
-   writeLog('get /speak/ received');
-   r.addSpeak('Hello, you just received your first call');
-   writeLog(r.toXML());
-   writeLog('API Response:\n', response);
-   response.set({ 'Content-Type': 'text/xml' });
-   response.send(r.toXML());
-});
+// router.get('/speak/', function (request, response) {
+//    // Generate a Speak XML with the details of the text to play on the call.
+//    var r = plivo.Response();
+//    writeLog('get /speak/ received');
+//    r.addSpeak('Hello, you just received your first call');
+//    writeLog(r.toXML());
+//    writeLog('API Response:\n', response);
+//    response.set({ 'Content-Type': 'text/xml' });
+//    response.send(r.toXML());
+// });
 
 function writeLog(log1, log2) {
    console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
