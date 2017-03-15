@@ -304,6 +304,9 @@ router.all('/hangup_customer_call/', function (request, response) {
          var callUpdate = {}
          callUpdate[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.COMPLETED;
          callUpdate[constants.SCHEMA_CALL_DETAILS.END_TIME] = constants.formatDate(new Date()).time;
+         callUpdate[constants.SCHEMA_CALL_DETAILS.DURATION] = data.Duration;
+         callUpdate[constants.SCHEMA_CALL_DETAILS.BILLED_DURATION] = data.BillDuration;
+         callUpdate[constants.SCHEMA_CALL_DETAILS.AMOUNT] = data.TotalCost;
          if (callStatus == constants.CALL_STATUS.WAITING) {
             callUpdate[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.NOT_ANSWERED;
          }
@@ -465,8 +468,11 @@ router.all('/dial/:sip', function (request, response) {
 
    var mySIP = request.param('sip'); //'sip:agent1170223182308@phone.plivo.com';
    writeLog('/dial/ to call sip: ', mySIP);
+   var params = {
+      'dialMusic': request.protocol + '://' + request.headers.host + "/custom_ringing_tone/"
+   };
    var r = plivo.Response();
-   var dial_element = r.addDial();
+   var dial_element = r.addDial(params);
    dial_element.addUser(mySIP);
    var xml = r.toXML();
    writeLog('dial XML: ', xml);

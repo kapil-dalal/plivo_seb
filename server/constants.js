@@ -97,7 +97,7 @@ var SCHEMA_CALL_DETAILS = {
    ID: 'id',
    FROM_CUSTOMER_ID: 'from_customer_id',
    CALL_UUID: 'uuid',
-   RECORD_URI: 'record_url',
+   RECORD_URL: 'record_url',
    DURATION: 'duration',
    BILLED_DURATION: 'billed_duration',
    DIRECTION: 'direction',
