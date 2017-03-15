@@ -368,7 +368,7 @@ router.all('/confrence_callback/', function (request, response) {
    callDetailData[constants.SCHEMA_CALL_DETAILS.CALL_UUID] = data.CallUUID;
    callDetailData[constants.SCHEMA_CALL_DETAILS.DIRECTION] = constants.CALL_TYPES.INBOUND;
    callDetailData[constants.SCHEMA_CALL_DETAILS.DATE] = new Date();
-   callUpdate[constants.SCHEMA_CALL_DETAILS.JOIN_TIME] = constants.formatDate(new Date()).time;
+   callDetailData[constants.SCHEMA_CALL_DETAILS.JOIN_TIME] = constants.formatDate(new Date()).time;
    callDetailData[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.WAITING;
    if (data.ConferenceAction != "exit") {
       var callDetails = [
