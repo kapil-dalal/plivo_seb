@@ -237,6 +237,7 @@ function outboundCall(request, response) {
                'method': "GET", // HTTP method to submit the action URL
                redirect: "false",
                recordSession: true,
+               startOnDialAnswer: true,
                // 'callbackUrl': "https://intense-brook-8241.herokuapp.com/record_callback/", // If set, this URL is fired in background when the recorded file is ready to be used.
                // 'callbackMethod': "GET" // Method used to notify the callbackUrl.
             }
