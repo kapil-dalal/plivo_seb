@@ -32,20 +32,22 @@ setTimeout(function () {
       dbService.query(callDetailsQuery, function (err, callDetailsResult) {
          if (err) {
             console.log('callDetailsQuery error: ', err);
+            setTimeout(function () {
+               getWaitingCallsAndFreeAgents();
+            }, 5000);
          } else {
-            console.log('callDetailsQuery result: ', callDetailsResult);
             dbService.query(freeAgentQuery, function (err, freeAgentResult) {
                if (err) {
                   console.log('freeAgentQuery error: ', err);
+                  setTimeout(function () {
+                     getWaitingCallsAndFreeAgents();
+                  }, 5000);
                } else {
-                  console.log('freeAgentQuery result: ', freeAgentResult);
-
                   transferCallToAgents(0, callDetailsResult, freeAgentResult, function () {
                      if (callDetailsResult && freeAgentResult && callDetailsResult.length > 0 && callDetailsResult.length == freeAgentResult.length) {
                         getWaitingCallsAndFreeAgents();
                      } else {
                         setTimeout(function () {
-                           console.log('calling again transfer call');
                            getWaitingCallsAndFreeAgents();
                         }, 5000);
                      }
@@ -88,7 +90,6 @@ setTimeout(function () {
                            cb();
                         }
                      } else {
-                        console.log('call is forwarding: ', agentData);
                         var callUpdate = {}
                         callUpdate[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.IN_PROGRESS;
                         callUpdate[constants.SCHEMA_CALL_DETAILS.AGENT_ID] = agentDetails[constants.SCHEMA_AGENTS.ID];
@@ -512,7 +513,7 @@ router.all('/play/', function (request, response) {
 // });
 
 function writeLog(log1, log2) {
-   console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
+   // console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
 }
 
 
