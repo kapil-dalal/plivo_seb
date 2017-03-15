@@ -204,7 +204,7 @@ function outboundCall(request, response) {
             callDetailData[constants.SCHEMA_CALL_DETAILS.DATE] = constants.formatDate(new Date()).date;
             callDetailData[constants.SCHEMA_CALL_DETAILS.JOIN_TIME] = constants.formatDate(new Date()).time;
             callDetailData[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.IN_PROGRESS;
-            callDetailData[constants.SCHEMA_CALL_DETAILS.AGENTS] = agentResult[constants.SCHEMA_AGENTS.ID];
+            callDetailData[constants.SCHEMA_CALL_DETAILS.AGENT_ID] = agentResult[constants.SCHEMA_AGENTS.ID];
             var callDetails = [
                {
                   $table: constants.SCHEMA_NAMES.CALL_DETAILS,
