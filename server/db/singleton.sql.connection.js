@@ -10,13 +10,13 @@ var sqlConfig = {
    database: "plivo_test"
 };
 
-sqlConfig = {
-   host: "localhost",
-   port: "3306",
-   user: "root",
-   password: "root",
-   database: "plivo_test"
-};
+// sqlConfig = {
+//    host: "localhost",
+//    port: "3306",
+//    user: "root",
+//    password: "root",
+//    database: "plivo_test"
+// };
 
 function endConnection() {
    if (sqlConnection) {
