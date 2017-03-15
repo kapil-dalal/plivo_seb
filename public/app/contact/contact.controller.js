@@ -1,4 +1,4 @@
-app.controller('contactController', ["$scope", "$cookies", "httpService",
+app.controller('contactController', ["$scope", "$cookieStore", "httpService",
    function ($scope, $cookies, httpService) {
       console.log('phoneController called');
       $scope.isSession = false;
