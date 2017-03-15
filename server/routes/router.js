@@ -400,6 +400,9 @@ router.all('/dial/:sip', function (request, response) {
    var record_params = {
       'action': 'https://35.165.241.189:3010/record_action/', // Submit the result of the record to this URL
       'method': "GET", // HTTP method to submit the action URL
+      redirect: "false",
+      recordSession: true,
+      startOnDialAnswer: true,
       // 'callbackUrl': "https://intense-brook-8241.herokuapp.com/record_callback/", // If set, this URL is fired in background when the recorded file is ready to be used.
       // 'callbackMethod': "GET" // Method used to notify the callbackUrl.
    }
@@ -421,17 +424,23 @@ router.all('/record_action/', function (request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
    console.log('/record_action/ data: ', data);
 
-   var record_url = request.param('RecordUrl');
-   var record_duration = request.param('RecordingDuration');
-   var record_id = request.param('RecordingID');
-
-   console.log('Record Url : ' + record_url + ' Recording Duration : ' + record_duration + ' Recording ID : ' + record_id);
-
    response.set({
       'Content-Type': 'text/xml'
    });
    response.send();
 
+   var callUpdate = {}
+   callUpdate[constants.SCHEMA_CALL_DETAILS.RECORD_URL] = data.RecordUrl;
+   var callUpdates = [
+      {
+         $table: constants.SCHEMA_NAMES.CALL_DETAILS,
+         $update: callUpdate,
+         $filter: constants.SCHEMA_CALL_DETAILS.CALL_UUID + "='" + data.CallUUID + "'"
+      }
+   ];
+   dbService.update(callUpdates, function (err, result) {
+
+   })
 });
 
 router.all('/play/', function (request, response) {
