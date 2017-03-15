@@ -54,7 +54,7 @@ router.post('/session', function (request, response) {
                      response.status(500).send(err);
                   } else {
                      var customerId = customerResult[constants.SCHEMA_CUSTOMERS.ID];
-                     response.cookie("customerSessionPlivo", customerId);
+                     // response.cookie("customerSessionPlivo", customerId);
                      response.send(JSON.stringify({ customerId: customerId }));
                   }
                });
@@ -65,7 +65,7 @@ router.post('/session', function (request, response) {
                      response.status(500).send(err);
                   } else {
                      var customerId = customerInsertResult[constants.SCHEMA_NAMES.CUSTOMERS][0].insertId;
-                     response.cookie("customerSessionPlivo", customerId);
+                     // response.cookie("customerSessionPlivo", customerId);
                      response.send(JSON.stringify({ customerId: customerId }));
                   }
                });

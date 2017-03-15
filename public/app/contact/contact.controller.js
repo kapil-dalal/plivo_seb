@@ -52,6 +52,7 @@ app.controller('contactController', ["$scope", "$cookies", "httpService",
                $scope.isSession = true;
                initPlivo();
                customerSessionPlivo = $cookies.get('customerSessionPlivo');
+               $cookies.put('customerSessionPlivo', customerSessionPlivo);
             },
             function (err) {
                console.log("controller createAgent err: ", err);
