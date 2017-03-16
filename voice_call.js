@@ -1,11 +1,8 @@
 var express = require('express');
-// var plivo = require('plivo');
 var app = express();
 
-// var p = plivo.RestAPI({
-//    authId: 'MAYTA5NZA0MZK1NZK3N2',
-//    authToken: 'ZDdlNTkyMGFhNWY2YzM4ZGIwN2UxZDRhZmY5NmI1'
-// });
+var config = require('../config');
+var plivoApi = config.plivoApi;
 
 app.get('/make_call', function (req, res) {
    var params = {
@@ -20,7 +17,7 @@ app.get('/make_call', function (req, res) {
    };
 
    // Prints the complete response
-   p.make_call(params, function (status, response) {
+   plivoApi.make_call(params, function (status, response) {
       console.log('Status: ', status);
       console.log('API Response:\n', response);
    });

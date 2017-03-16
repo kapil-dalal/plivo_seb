@@ -4,11 +4,8 @@ var constants = require('../constants');
 var router = express.Router();
 
 module.exports = router;
-var plivo = require('plivo');
-var p = plivo.RestAPI({
-   authId: 'MAM2M4ZGE3NJIWMGRIM2',
-   authToken: 'MzhlYjBhOGExNGQ0NzI0ZDY4YjFkOWM4MzEwNjI3'
-});
+// var config = require('../config');
+// var plivoApi = config.plivoApi;
 
 router.post('/session', function (request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;

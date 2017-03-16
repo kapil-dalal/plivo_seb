@@ -20,11 +20,6 @@ app.use('/customer', require('./routes/customer_session'));
 app.use('/api', require('./routes/create_agent'));
 app.use('/', require('./routes/router'));
 
-// p.get_account({}, function (status, response) {
-//     console.log('Status: ', status);
-//     console.log('API Response:\n', response);
-// });
-
 var options = {
    key: fs.readFileSync(__dirname + '/ssl/key_new_1.key', 'utf8'),
    cert: fs.readFileSync(__dirname + '/ssl/cert_new_1.crt', 'utf8')
@@ -114,11 +109,8 @@ wsServer.on('request', function (request) {
    });
 });
 
-// var plivo = require('plivo');
-// var p = plivo.RestAPI({
-//    authId: 'MAM2M4ZGE3NJIWMGRIM2',
-//    authToken: 'MzhlYjBhOGExNGQ0NzI0ZDY4YjFkOWM4MzEwNjI3'
-// });
+// var config = require('./config');
+// var p = config.plivoApi;
 
 // p.get_live_conferences({}, function (status, response) {
 //    console.log('get_live_conference Status: ', status);

@@ -2,21 +2,12 @@ var mysql = require('mysql');
 
 var sqlConnection = null;
 
-var sqlConfig = {
-   host: "plivotest.csa6sdoa57s6.us-west-2.rds.amazonaws.com",
-   port: "3306",
-   user: "root",
-   password: "root1234",
-   database: "plivo_test"
-};
+var config = require('../config');
 
-// sqlConfig = {
-//    host: "localhost",
-//    port: "3306",
-//    user: "root",
-//    password: "root",
-//    database: "plivo_test"
-// };
+var sqlConfig = config.sqlConfig;
+
+// sqlConfig = config.sqlLocalConfig;
+
 
 function endConnection() {
    if (sqlConnection) {

@@ -2,14 +2,14 @@ var express = require('express');
 var dbService = require('../db/db.service');
 var agentStatus = require('../agent_status/agent.status');
 var constants = require('../constants');
+var utility = require('../utility');
+var config = require('../config');
 var router = express.Router();
 
 module.exports = router;
 var plivo = require('plivo');
-var plivoApi = plivo.RestAPI({
-   authId: 'SAMZHMYMQ2NMFJMWM0OW',
-   authToken: 'MjYwYTM1N2Y3NGNlNmZiNDJiN2U4MGZhYzY2NmE5'
-});
+var plivoApi = config.plivoApi;
+
 var PLIVO_SONG = "https://s3.amazonaws.com/plivocloud/music.mp3";
 
 var IVR_MESSAGE1 = "Welcome to the Plivo. Press 1 to forward the call. Press 2 to call on S.I.P. Press 3 for connect directly. Press 4 for wait to receive call.";
@@ -157,7 +157,7 @@ function transferCall(callUuid, sip) {
    var params = {
       "legs": "aleg",
       'call_uuid': callUuid, // ID of the call
-      'aleg_url': 'https://35.165.241.189:3010/dial/' + sip + '/',
+      'aleg_url': config.server + '/dial/' + sip + '/',
       'aleg_method': "GET"
    };
 
@@ -201,8 +201,8 @@ function outboundCall(request, response) {
             callDetailData[constants.SCHEMA_CALL_DETAILS.TO_CUSTOMER_NUMBER] = data.To;
             callDetailData[constants.SCHEMA_CALL_DETAILS.CALL_UUID] = data.CallUUID;
             callDetailData[constants.SCHEMA_CALL_DETAILS.DIRECTION] = constants.CALL_TYPES.OUTBOUND;
-            callDetailData[constants.SCHEMA_CALL_DETAILS.DATE] = constants.formatDate(new Date()).date;
-            callDetailData[constants.SCHEMA_CALL_DETAILS.JOIN_TIME] = constants.formatDate(new Date()).time;
+            callDetailData[constants.SCHEMA_CALL_DETAILS.DATE] = utility.formatDate(new Date()).date;
+            callDetailData[constants.SCHEMA_CALL_DETAILS.JOIN_TIME] = utility.formatDate(new Date()).time;
             callDetailData[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.IN_PROGRESS;
             callDetailData[constants.SCHEMA_CALL_DETAILS.AGENT_ID] = agentResult[constants.SCHEMA_AGENTS.ID];
             var callDetails = [
@@ -233,7 +233,7 @@ function outboundCall(request, response) {
             })
             r.addSpeak(connectingMessage);
             var record_params = {
-               'action': 'https://35.165.241.189:3010/record_action/', // Submit the result of the record to this URL
+               'action': config.server + '/record_action/', // Submit the result of the record to this URL
                'method': "GET", // HTTP method to submit the action URL
                redirect: "false",
                recordSession: true,
@@ -281,7 +281,7 @@ router.all('/hangup_customer_call/', function (request, response) {
          let callStatus = callDetailsResult[constants.SCHEMA_CALL_DETAILS.STATUS_ID];
          var callUpdate = {}
          callUpdate[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.COMPLETED;
-         callUpdate[constants.SCHEMA_CALL_DETAILS.END_TIME] = constants.formatDate(new Date()).time;
+         callUpdate[constants.SCHEMA_CALL_DETAILS.END_TIME] = utility.formatDate(new Date()).time;
          callUpdate[constants.SCHEMA_CALL_DETAILS.DURATION] = data.Duration;
          callUpdate[constants.SCHEMA_CALL_DETAILS.BILLED_DURATION] = data.BillDuration;
          callUpdate[constants.SCHEMA_CALL_DETAILS.AMOUNT] = data.TotalCost;
@@ -345,8 +345,8 @@ router.all('/confrence_callback/', function (request, response) {
    callDetailData[constants.SCHEMA_CALL_DETAILS.FROM_CUSTOMER_ID] = data.To;
    callDetailData[constants.SCHEMA_CALL_DETAILS.CALL_UUID] = data.CallUUID;
    callDetailData[constants.SCHEMA_CALL_DETAILS.DIRECTION] = constants.CALL_TYPES.INBOUND;
-   callDetailData[constants.SCHEMA_CALL_DETAILS.DATE] = constants.formatDate(new Date()).date;
-   callDetailData[constants.SCHEMA_CALL_DETAILS.JOIN_TIME] = constants.formatDate(new Date()).time;
+   callDetailData[constants.SCHEMA_CALL_DETAILS.DATE] = utility.formatDate(new Date()).date;
+   callDetailData[constants.SCHEMA_CALL_DETAILS.JOIN_TIME] = utility.formatDate(new Date()).time;
    callDetailData[constants.SCHEMA_CALL_DETAILS.STATUS_ID] = constants.CALL_STATUS.WAITING;
    if (data.ConferenceAction != "exit") {
       var callDetails = [
@@ -398,7 +398,7 @@ router.all('/dial/:sip', function (request, response) {
    var r = plivo.Response();
 
    var record_params = {
-      'action': 'https://35.165.241.189:3010/record_action/', // Submit the result of the record to this URL
+      'action': config.server + '/record_action/', // Submit the result of the record to this URL
       'method': "GET", // HTTP method to submit the action URL
       redirect: "false",
       recordSession: true,

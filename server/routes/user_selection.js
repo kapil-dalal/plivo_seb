@@ -1,9 +1,5 @@
-var plivo = require('plivo');
-var authId = 'MAM2M4ZGE3NJIWMGRIM2';
-var p = plivo.RestAPI({
-   authId: 'MAM2M4ZGE3NJIWMGRIM2',
-   authToken: 'MzhlYjBhOGExNGQ0NzI0ZDY4YjFkOWM4MzEwNjI3'
-});
+var config = require('../config');
+var plivoApi = config.plivoApi;
 
 var customerWiseResponse = {};
 
@@ -30,7 +26,7 @@ function userSelection(request, response, cb) {
          'aleg_url': request.protocol + '://' + request.headers.host + "/dial/",
          'aleg_method': "GET"
       };
-      return p.transfer_call(params);
+      return plivoApi.transfer_call(params);
    } else {
       wrongSelection(request, response, plivoResponse, data, cb);
    }
@@ -84,7 +80,7 @@ function wrongSelection(request, response, plivoResponse, data, cb) {
    plivoResponse.addSpeak('Thankyou for calling');
    cb(plivoResponse.toXML());
    setTimeout(function () {
-      p.hangup_call(params, function (status, response) {
+      plivoApi.hangup_call(params, function (status, response) {
          writeLog('Status: ', status);
          writeLog('API Response:\n', response);
       });

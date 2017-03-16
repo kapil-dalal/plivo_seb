@@ -4,11 +4,8 @@ var constants = require('../constants');
 var router = express.Router();
 
 module.exports = router;
-var plivo = require('plivo');
-var p = plivo.RestAPI({
-   authId: 'MAM2M4ZGE3NJIWMGRIM2',
-   authToken: 'MzhlYjBhOGExNGQ0NzI0ZDY4YjFkOWM4MzEwNjI3'
-});
+var config = require('../config');
+var plivoApi = config.plivoApi;
 
 router.post('/register_agent', function (request, response) {
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
@@ -54,10 +51,8 @@ router.post('/register_agent', function (request, response) {
                   response.status(500).send(err);
                } else {
                   response.end(JSON.stringify(agentResult));
-
                   // create endpoint
                   var agentId = agentResult.agents[0].insertId;
-
                   var agentStatus = {};
                   agentStatus[constants.SCHEMA_AGENT_STATUS.AGENT_ID] = agentId;
                   agentStatus[constants.SCHEMA_AGENT_STATUS.STATUS_ID] = constants.AGENT_STATUS_TYPE.OFF_LINE;
@@ -67,7 +62,7 @@ router.post('/register_agent', function (request, response) {
                         var params = {
                            'endpoint_id': endPointResult.endpoint_id // ID of the endpoint for which the details have to be retrieved
                         };
-                        p.get_endpoint(params, function (status, endpointDetailResponse) {
+                        plivoApi.get_endpoint(params, function (status, endpointDetailResponse) {
                            var updateAgentData = {};
                            updateAgentData[constants.SCHEMA_AGENTS.SIP] = endpointDetailResponse.sip_uri;
                            updateAgentData[constants.SCHEMA_AGENTS.SIP_USER_NAME] = endpointDetailResponse.username;
@@ -100,7 +95,7 @@ function createEndPoint(agentData, cb) {
       app_id: '15250876692469854'
    };
 
-   p.create_endpoint(params, function (status, response) {
+   plivoApi.create_endpoint(params, function (status, response) {
       writeLog('create_endpoint Status: ', status);
       writeLog('create_endpoint API Response:\n', response);
       if (status >= 200 && status <= 300) {
