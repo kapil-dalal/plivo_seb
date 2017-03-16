@@ -389,12 +389,9 @@ router.all('/dial/:sip', function (request, response) {
    writeLog('call on uri /dial/');
    var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
    writeLog('/dial/ data: ', data);
-
    var mySIP = request.param('sip'); //'sip:agent1170223182308@phone.plivo.com';
-   writeLog('/dial/ to call sip: ', mySIP);
-   var params = {
-      'dialMusic': request.protocol + '://' + request.headers.host + "/custom_ringing_tone/"
-   };
+
+   //TODO: get the call detail to get customer details and set the customer name in caller name
    var r = plivo.Response();
 
    var record_params = {
@@ -409,7 +406,10 @@ router.all('/dial/:sip', function (request, response) {
 
    r.addRecord(record_params);
 
-
+   var params = {
+      callerName: data.CallUUID,
+      dialMusic: request.protocol + '://' + request.headers.host + "/custom_ringing_tone/"
+   };
    var dial_element = r.addDial(params);
    dial_element.addUser(mySIP);
    var xml = r.toXML();
