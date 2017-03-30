@@ -180,7 +180,6 @@ app.controller('dashboardController', ['websocketService', "$rootScope", "$scope
 
       $scope.sendSmsToCustomer = function (customerId, phoneNumber, event) {
          var keyCode = event.which || event.keyCode;
-         console.log('sendSmsToCustomer: ' + customerId, phoneNumber, event.target.value);
          if (keyCode == 13) {
             var msg = event.target.value;
             httpService.sendSMS(

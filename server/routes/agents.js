@@ -106,6 +106,25 @@ function createEndPoint(agentData, cb) {
    });
 }
 
+router.get('/agents', function (request, response) {
+   var data = (request.query && Object.keys(request.query).length > 0) ? request.query : request.body;
+   writeLog('/agents/ data: ', data);
+
+   var query = {
+      $table: constants.SCHEMA_NAMES.AGENTS,
+      $filter: null,
+      limit: data.limit || 100
+   };
+   dbService.query(query, function (err, customerResult) {
+      if (err) {
+         writeLog('customer list err: ', err);
+         response.status(500).send(err);
+      } else {
+         response.send(JSON.stringify(customerResult));
+      }
+   });
+});
+
 function writeLog(log1, log2) {
    // console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
 }

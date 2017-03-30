@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 app.use('/user', require('./routes/login'));
 app.use('/customer', require('./routes/customers'));
-app.use('/api', require('./routes/create_agent'));
+app.use('/api', require('./routes/agents'));
 app.use('/', require('./routes/router'));
 
 var options = {
