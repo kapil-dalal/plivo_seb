@@ -15,3 +15,7 @@ body {
       margin-top:7px;
       min-width:7px;
 }
+.container-narrow {
+   max-width: 100%;
+   width: 98%;
+}

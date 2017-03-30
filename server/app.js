@@ -16,7 +16,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.use('/user', require('./routes/login'));
-app.use('/customer', require('./routes/customer_session'));
+app.use('/customer', require('./routes/customers'));
 app.use('/api', require('./routes/create_agent'));
 app.use('/', require('./routes/router'));
 
@@ -165,4 +165,25 @@ wsServer.on('request', function (request) {
 // p.get_cdr(params, function (status, response) {
 //    console.log('Status: ', status);
 //    console.log('API Response:\n', response);
+// });
+
+// var config = require('./config');
+// var plivo = require('plivo');
+// var plivoApi = config.plivoApi;
+
+
+// var params = {
+//     'src': '1111111111', // Sender's phone number with country code
+//     'dst' : '+918588842775', // Receiver's phone Number with country code
+//     'text' : "Hi, message from Plivo", // Your SMS Text Message - English
+//     //'text' : "こんにちは、元気ですか？" // Your SMS Text Message - Japanese
+//     //'text' : "Ce est texte généré aléatoirement" // Your SMS Text Message - French
+//    //  'url' : "https://intense-brook-8241.herokuapp.com/report/", // The URL to which with the status of the message is sent
+//    //  'method' : "GET" // The method used to call the url
+// };
+
+// // Prints the complete response
+// plivoApi.send_message(params, function (status, response) {
+//     console.log('Status: ', status);
+//     console.log('API Response:\n', response);
 // });

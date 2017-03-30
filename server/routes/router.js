@@ -412,12 +412,7 @@ router.all('/dial/:sip', function (request, response) {
    };
    var dial_element = r.addDial(params);
    dial_element.addUser(mySIP);
-   var xml = r.toXML();
-   writeLog('dial XML: ', xml);
-   response.set({
-      'Content-Type': 'text/xml'
-   });
-   response.end(xml);
+   sendResponse(response, r);
 });
 
 router.all('/record_action/', function (request, response) {
@@ -462,5 +457,5 @@ router.all('/play/', function (request, response) {
 });
 
 function writeLog(log1, log2) {
-   // console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
+   console.log(log1 + (log2 ? JSON.stringify(log2) : ""));
 }

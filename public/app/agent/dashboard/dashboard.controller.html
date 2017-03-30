@@ -3,66 +3,97 @@
          <img class="muted" src="../../assets/logo.png">
    </div>
    <hr/>
-   <div class="row-fluid marketing">
-         <div class="span12">
+   <table border="2" style="width: 100%; height: 100%">
+      <tr>
+         <td style="width: 50%; text-align: center;" valign="top">
+            <div class="row-fluid marketing">
+                  <div class="span12">
 
-            <h4>Kapil Web Solution</h4>
-            <p>Make a call to number using country code</p>
+                     <h4>Kapil Web Solution</h4>
+                     <p>Make a call to number using country code</p>
 
-            <hr/>
-            <div id="logout_box" ng-show="logoutBox">
-               <input class="btn" type="button" id="btn_logout" ng-click="logout()" value="Logout">
-               <br/>
+                     <hr/>
+                     <div id="logout_box" ng-show="logoutBox">
+                        <input class="btn" type="button" id="btn_logout" ng-click="logout()" value="Logout">
+                        <br/>
+                     </div>
+
+                     <span class="label" id="status_txt">{{statusTxt}}</span><br/><br/>
+
+
+                     <form id="callcontainer" ng-show="callContainerBox" style="display: block">
+                        <input type="text" name="to" id="to" ng-model="sip" placeholder="Phone number or a SIP URI">
+                        <br/>
+                        <a href="#" id="make_call" class="btn main-btn btn-success" ng-click="call();">{{makeCallTxt}}</a>
+
+                     </form>
+                     <div id="incoming_callbox" style="display: none;" class="call">
+                        <a href="#" class="btn main-btn btn-success" ng-click="answer()">Answer</a>
+                        <a href="#" class="btn main-btn btn-danger" ng-click="reject()">Reject</a>
+                     </div>
+
+                     <div id="btn-container" ng-show="btnContainerBox" style="display: block">
+                        <a href="#" id="hangup_call" class="btn main-btn btn-danger" ng-click="hangup();">Hangup</a>
+                        <a href="#" id="linkMute" ng-show="linkMute" class="badge badge-warning" ng-click="mute();">Mute</a>
+                        <a href="#" id="linkUnmute" ng-show="linkUnmute" class="badge badge-warning" ng-click="unmute();" style="display: none">Unmute</a><br/>
+
+                        <a class="btn btn-info" href="#" ng-click="dtmf('1');">1</a>
+                        <a class="btn btn-info" href="#" ng-click="dtmf('2');">2</a>
+                        <a class="btn btn-info" href="#" ng-click="dtmf('3');">3</a>
+
+                        <br/>
+
+                        <a class="btn btn-info" href="#" ng-click="dtmf('4');">4</a>
+                        <a class="btn btn-info" href="#" ng-click="dtmf('5');">5</a>
+                        <a class="btn btn-info" href="#" ng-click="dtmf('6');">6</a>
+
+                        <br/>
+
+                        <a class="btn btn-info" href="#" ng-click="dtmf('7');">7</a>
+                        <a class="btn btn-info" href="#" ng-click="dtmf('8');">8</a>
+                        <a class="btn btn-info" href="#" ng-click="dtmf('9');">9</a>
+
+                        <br/>
+
+                        <a class="btn btn-info" href="#" ng-click="dtmf('*');">*</a>
+                        <a class="btn btn-info" href="#" ng-click="dtmf('0');">0</a>
+                        <a class="btn btn-info" href="#" ng-click="dtmf('#');"> #</a>
+
+                        <br/>
+                     </div>
+                  </div>
+                  <hr/>
+
+                  <div class="footer">
+                     <p>© Kapil 2017</p>
+                  </div>
             </div>
-
-            <span class="label" id="status_txt">{{statusTxt}}</span><br/><br/>
-
-
-            <form id="callcontainer" ng-show="callContainerBox" style="display: block">
-               <input type="text" name="to" id="to" ng-model="sip" placeholder="Phone number or a SIP URI">
-               <br/>
-               <a href="#" id="make_call" class="btn main-btn btn-success" ng-click="call();">{{makeCallTxt}}</a>
-
-            </form>
-            <div id="incoming_callbox" style="display: none;" class="call">
-               <a href="#" class="btn main-btn btn-success" ng-click="answer()">Answer</a>
-               <a href="#" class="btn main-btn btn-danger" ng-click="reject()">Reject</a>
-            </div>
-
-            <div id="btn-container" ng-show="btnContainerBox" style="display: block">
-               <a href="#" id="hangup_call" class="btn main-btn btn-danger" ng-click="hangup();">Hangup</a>
-               <a href="#" id="linkMute" ng-show="linkMute" class="badge badge-warning" ng-click="mute();">Mute</a>
-               <a href="#" id="linkUnmute" ng-show="linkUnmute" class="badge badge-warning" ng-click="unmute();" style="display: none">Unmute</a><br/>
-
-               <a class="btn btn-info" href="#" ng-click="dtmf('1');">1</a>
-               <a class="btn btn-info" href="#" ng-click="dtmf('2');">2</a>
-               <a class="btn btn-info" href="#" ng-click="dtmf('3');">3</a>
-
-               <br/>
-
-               <a class="btn btn-info" href="#" ng-click="dtmf('4');">4</a>
-               <a class="btn btn-info" href="#" ng-click="dtmf('5');">5</a>
-               <a class="btn btn-info" href="#" ng-click="dtmf('6');">6</a>
-
-               <br/>
-
-               <a class="btn btn-info" href="#" ng-click="dtmf('7');">7</a>
-               <a class="btn btn-info" href="#" ng-click="dtmf('8');">8</a>
-               <a class="btn btn-info" href="#" ng-click="dtmf('9');">9</a>
-
-               <br/>
-
-               <a class="btn btn-info" href="#" ng-click="dtmf('*');">*</a>
-               <a class="btn btn-info" href="#" ng-click="dtmf('0');">0</a>
-               <a class="btn btn-info" href="#" ng-click="dtmf('#');"> #</a>
-
-               <br/>
-            </div>
-         </div>
-         <hr/>
-
-         <div class="footer">
-            <p>© Kapil 2017</p>
-         </div>
-   </div>
+         </td>
+         <td style="width: 50%; text-align: left; overflow: auto;" valign="top">
+            <table border="2" style="width: 100%; ">
+               <tr>
+                  <td style="width: 100%" colspan="3">
+                     <h4>Customers List</h4>
+                  </td>
+               </tr>
+               <tr>
+                  <td style="width: 60%">
+                     Name
+                  </td>
+                  <td style="width: 20%">
+                     Call
+                  </td>
+                  <td style="width: 20%">
+                     Send SMS
+                  </td>
+               </tr>
+               <tr ng-repeat="customer in customerList">
+                  <td>{{ customer.name }}</td>
+                  <td> <a style="cursor: pointer;" ng-click="callToCustomer(customer.phone_number)">{{ customer.phone_number }}</a> </td>
+                  <td> <input type="text" ng-keyup="sendSmsToCustomer(customer.id, customer.phone_number, $event)" /> </td>
+               </tr>
+            </table>
+         </td>
+      </tr>
+   </table>
 </div>

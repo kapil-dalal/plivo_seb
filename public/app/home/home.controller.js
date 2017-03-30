@@ -16,5 +16,8 @@ app.controller('homeController', ['$scope', '$state',
          console.log('goToLogin called');
          $state.go('login');
       }
-
+      $scope.goToCustomers = function () {
+         console.log('goToLogin called');
+         $state.go('dashboard.customers');
+      }
    }]);

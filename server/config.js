@@ -23,7 +23,7 @@ var plivoApi = require('plivo').RestAPI({
    authToken: plivoTokenId
 });
 
-module.exports.server = server;
+module.exports.server = serverHOST;
 module.exports.sqlConfig = sqlConfig;
 module.exports.sqlLocalConfig = sqlLocalConfig;
 module.exports.plivoApi = plivoApi;

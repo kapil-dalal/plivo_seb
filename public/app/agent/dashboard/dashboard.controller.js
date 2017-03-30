@@ -5,7 +5,16 @@ app.controller('dashboardController', ['websocketService', "$rootScope", "$scope
       }
       var agentDetails = $rootScope.agentDetails || {};
       console.log('dashboardController called: ', agentDetails);
-
+      $scope.customerList = [];
+      httpService.getCustomers(
+         function (customers) {
+            console.log('customers: ', customers.data);
+            $scope.customerList = customers.data;
+         },
+         function (err) {
+            console.log('customers err: ', err);
+         }
+      );
 
       // variables
       $scope.userName = agentDetails.sip_user_name;
@@ -162,6 +171,33 @@ app.controller('dashboardController', ['websocketService', "$rootScope", "$scope
          console.log("onCallFailed:" + cause);
          callUI();
          $scope.statusTxt = "Call Failed:" + cause;
+      }
+
+      $scope.callToCustomer = function (phoneNumber) {
+         $scope.sip = phoneNumber;
+         $scope.call();
+      }
+
+      $scope.sendSmsToCustomer = function (customerId, phoneNumber, event) {
+         var keyCode = event.which || event.keyCode;
+         console.log('sendSmsToCustomer: ' + customerId, phoneNumber, event.target.value);
+         if (keyCode == 13) {
+            var msg = event.target.value;
+            httpService.sendSMS(
+               {
+                  agent_id: agentDetails.id,
+                  customer_id: customerId,
+                  number: phoneNumber,
+                  message: msg,
+               },
+               function (response) {
+                  console.log("sendSmsToCustomer response: ", response);
+               },
+               function (err) {
+                  console.log("sendSmsToCustomer err: ", err);
+               }
+            );
+         }
       }
 
       $scope.call = function () {

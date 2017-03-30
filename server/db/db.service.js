@@ -14,27 +14,7 @@ function createDB() {
       + " PRIMARY KEY (id) "
       + " );";
 
-   var CALL_DETAILS = "CREATE TABLE IF NOT EXISTS call_details"
-      + " ( "
-      + " id INT NOT NULL AUTO_INCREMENT, "
-      + " from_customer_id INT, "
-      + " to_customer_number  VARCHAR(100), "
-      + " uuid VARCHAR(100) NOT NULL, "
-      + " record_url VARCHAR(100), "
-      + " duration VARCHAR(100), "
-      + " billed_duration VARCHAR(100), "
-      + " direction VARCHAR(100), "
-      + " join_time VARCHAR(100), "
-      + " end_time VARCHAR(100), "
-      + " date VARCHAR(100), "
-      + " amount VARCHAR(100), "
-      + " status_id INT, "
-      + " agent_id INT, "
-      + " PRIMARY KEY (id), "
-      + " FOREIGN KEY (from_customer_id) REFERENCES customers(id) ON DELETE NO ACTION ON UPDATE NO ACTION, "
-      + " FOREIGN KEY (agent_id) REFERENCES agents(id) ON DELETE NO ACTION ON UPDATE NO ACTION, "
-      + " FOREIGN KEY (status_id) REFERENCES call_status_types(id) ON DELETE NO ACTION ON UPDATE NO ACTION "
-      + " );";
+
 
    var USER_STATUS = "CREATE TABLE IF NOT EXISTS user_status"
       + " ( "
@@ -118,6 +98,40 @@ function createDB() {
       + " FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE NO ACTION ON UPDATE NO ACTION, "
       + " FOREIGN KEY (status_id) REFERENCES user_status(id) ON DELETE NO ACTION ON UPDATE NO ACTION "
       + " );";
+   var CALL_DETAILS = "CREATE TABLE IF NOT EXISTS call_details"
+      + " ( "
+      + " id INT NOT NULL AUTO_INCREMENT, "
+      + " from_customer_id INT, "
+      + " to_customer_number  VARCHAR(100), "
+      + " uuid VARCHAR(100) NOT NULL, "
+      + " record_url VARCHAR(100), "
+      + " duration VARCHAR(100), "
+      + " billed_duration VARCHAR(100), "
+      + " direction VARCHAR(100), "
+      + " join_time VARCHAR(100), "
+      + " end_time VARCHAR(100), "
+      + " date VARCHAR(100), "
+      + " amount VARCHAR(100), "
+      + " status_id INT, "
+      + " agent_id INT, "
+      + " PRIMARY KEY (id), "
+      + " FOREIGN KEY (from_customer_id) REFERENCES customers(id) ON DELETE NO ACTION ON UPDATE NO ACTION, "
+      + " FOREIGN KEY (agent_id) REFERENCES agents(id) ON DELETE NO ACTION ON UPDATE NO ACTION, "
+      + " FOREIGN KEY (status_id) REFERENCES call_status_types(id) ON DELETE NO ACTION ON UPDATE NO ACTION "
+      + " );";
+   var SMS_DETAILS = "CREATE TABLE IF NOT EXISTS sms_details"
+      + " ( "
+      + " id INT NOT NULL AUTO_INCREMENT, "
+      + " agent_id INT, "
+      + " to_customer_id INT, "
+      + " to_customer_number  VARCHAR(100), "
+      + " uuid VARCHAR(100) NOT NULL, "
+      + " date VARCHAR(100), "
+      + " message VARCHAR(500), "
+      + " PRIMARY KEY (id), "
+      + " FOREIGN KEY (to_customer_id) REFERENCES customers(id) ON DELETE NO ACTION ON UPDATE NO ACTION, "
+      + " FOREIGN KEY (agent_id) REFERENCES agents(id) ON DELETE NO ACTION ON UPDATE NO ACTION "
+      + " );";
 
    var USER_STATUS_DATA_1 = "INSERT INTO user_status(id, name) values(1, 'Active')";
    var USER_STATUS_DATA_2 = "INSERT INTO user_status(id, name) values(2, 'In-Active')";
@@ -144,6 +158,7 @@ function createDB() {
       AGENTS,
       CALL_STATUS_TYPES,
       CALL_DETAILS,
+      SMS_DETAILS,
       USER_STATUS_DATA_1,
       USER_STATUS_DATA_2,
       USER_TYPE_DATA_1,
@@ -166,6 +181,7 @@ function createDB() {
       "agents",
       "call_status_types",
       "call_details",
+      "sms_details",
       'USER_STATUS_DATA_1',
       'USER_STATUS_DATA_2',
       'USER_TYPE_DATA_1',

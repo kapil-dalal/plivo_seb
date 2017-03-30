@@ -35,6 +35,11 @@ app.config(function ($stateProvider, $urlRouterProvider) {
          templateUrl: 'app/agent/dashboard/dashboard.controller.html',
          controller: 'dashboardController'
       })
+      // .state('dashboard.customers', {
+      //    url: '/customers',
+      //    templateUrl: 'app/agent/customers/customers.controller.html',
+      //    controller: 'customersListController'
+      // })
       // .state('dashboard.contacts', {
       //    url: '/contacts',
       //    templateUrl: 'app/contact/contact.controller.html',

@@ -36,7 +36,8 @@ var SCHEMA_NAMES = {
    CUSTOMERS: 'customers',
    USERS: 'users',
    AGENTS: 'agents',
-   USER_TYPES: 'user_types'
+   USER_TYPES: 'user_types',
+   SMS_DETAILS: 'sms_details'
 }
 
 var SCHEMA_USER_STATUS = {
@@ -60,6 +61,16 @@ var SCHEMA_AGENT_STATUS = {
    USER_ID: 'user_id',
    STATUS_ID: 'status_id',
    CALL_UUID: 'call_uuid',
+}
+
+var SCHEMA_SMS_DETAILS = {
+   ID: 'id',
+   AGENT_ID: 'agent_id',
+   TO_CUSTOMER_ID: 'to_customer_id',
+   TO_CUSTOMER_NUMBER: 'to_customer_number',
+   UUID: 'uuid',
+   DATE: 'date',
+   MESSAGE: 'message',
 }
 
 var SCHEMA_USERS = {
@@ -142,6 +153,7 @@ module.exports.SCHEMA_USERS = SCHEMA_USERS;
 module.exports.SCHEMA_AGENTS = SCHEMA_AGENTS;
 module.exports.SCHEMA_CALL_STATUS_TYPES = SCHEMA_CALL_STATUS_TYPES;
 module.exports.SCHEMA_CALL_DETAILS = SCHEMA_CALL_DETAILS;
+module.exports.SCHEMA_SMS_DETAILS = SCHEMA_SMS_DETAILS;
 
 module.exports.FROM_SIP = FROM_SIP;
 module.exports.TO_NUMBER = TO_NUMBER;

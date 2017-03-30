@@ -47,11 +47,37 @@ app.factory('httpService', ['$http', function ($http) {
          });
    }
 
+   function getCustomers(successCB, errorCB) {
+      var url = '/customer/customers';
+      $http.get(url, config)
+         .then(
+         function (response, status) {
+            successCB(response);
+         },
+         function (err) {
+            errorCB(err);
+         });
+   }
+
+   function sendSMS(params, successCB, errorCB) {
+      var url = '/customer/send_sms';
+      $http.post(url, getParms(params), config)
+         .then(
+         function (response, status) {
+            successCB(response);
+         },
+         function (err) {
+            errorCB(err);
+         });
+   }
+
    return {
       createAgent: createAgent,
       login: login,
       createCustomerSession: createCustomerSession,
-      
+      getCustomers: getCustomers,
+      sendSMS: sendSMS,
+
    }
 
 }]);
