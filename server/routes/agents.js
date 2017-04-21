@@ -33,7 +33,7 @@ router.post('/register_agent', function (request, response) {
    userData[constants.SCHEMA_USERS.EMAIL_ID] = data.email_id;
    userData[constants.SCHEMA_USERS.PHONE_NUMBER] = data.phone_number;
    userData[constants.SCHEMA_USERS.USER_NAME] = data.user_name;
-   userData[constants.SCHEMA_USERS.PASSWORD] = data.password;
+   userData[constants.SCHEMA_USERS.PASSWORD] = data.user_name;
    userData[constants.SCHEMA_USERS.STATUS_ID] = constants.USER_STATUS.ACTIVE;
    userData[constants.SCHEMA_USERS.TYPE_ID] = constants.USER_TYPES.AGENT;
 
