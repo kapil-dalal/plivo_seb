@@ -55,7 +55,7 @@ router.post('/register_agent', function (request, response) {
                   var agentId = agentResult.agents[0].insertId;
                   var agentStatus = {};
                   agentStatus[constants.SCHEMA_AGENT_STATUS.AGENT_ID] = agentId;
-                  agentStatus[constants.SCHEMA_AGENT_STATUS.STATUS_ID] = constants.AGENT_STATUS_TYPE.OFF_LINE;
+                  agentStatus[constants.SCHEMA_AGENT_STATUS.STATUS_ID] = constants.AGENT_STATUS_TYPES.OFF_LINE;
                   agentStatus[constants.SCHEMA_AGENT_STATUS.USER_ID] = userId;
                   dbService.insert([{ $table: constants.SCHEMA_NAMES.AGENT_STATUS, $insert: [agentStatus] }], function (err, agentResult) {
                      createEndPoint(data, function (err, endPointResult) {

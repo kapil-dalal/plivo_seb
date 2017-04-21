@@ -63,38 +63,46 @@ wsServer.on('request', function (request) {
             console.log('connections for user: ' + fromAgentId);
             connection.userId = fromAgentId;
             userConnections[fromAgentId] = connection;
+            var freeAgentQuery = {
+               $table: constants.SCHEMA_NAMES.AGENT_STATUS,
+               $filter: constants.SCHEMA_AGENT_STATUS.AGENT_ID + '="' + fromAgentId + '" and ' + constants.SCHEMA_AGENT_STATUS.STATUS_ID + '!="' + constants.AGENT_STATUS_TYPES.ENGAGED + '"',
+               $limit: 1
+            };
 
-            agentStatus.updateAgentStatusagentDetails(fromAgentId, constants.AGENT_STATUS_TYPES.FREE, null, function () {
+            dbService.query(freeAgentQuery, function (err, freeAgentResult) {
+               if (err) {
+                  console.log('freeAgentQuery error: ', err);
+               } else {
+                  if (freeAgentResult.length > 0) {
+                     agentStatus.updateAgentStatusagentDetails(fromAgentId, constants.AGENT_STATUS_TYPES.FREE, null, function () {
 
+                     });
+                  }
+               }
             });
-            // var connObject = userConnections[fromUserId];
-            // if (connObject) {
-            //    connection.index = Object.keys(connObject).length;
-            //    userConnections[fromUserId].push(connection);
-            // } else {
-            //    connection.index = 0;
-            //    userConnections[fromUserId] = [connection];
-            // }
          }
-
-         // var toUserId = jsonData.to;
-         // if (jsonData.type == 'textMessage') {
-         //    var message = jsonData.message;
-         //    console.log('message got: ', message);
-         // }
-
-         // var conn = userConnections[toUserId];
-         // if (conn) {
-         //    conn.send(utfMessage);
-         // }
       }
    });
 
    connection.on('close', function (detailId) {
       console.log('on connection closed: ', connection.userId);
       delete userConnections[connection.userId];
-      agentStatus.updateAgentStatusagentDetails(connection.userId, constants.AGENT_STATUS_TYPES.OFF_LINE, null, function () {
+      var freeAgentQuery = {
+         $table: constants.SCHEMA_NAMES.AGENT_STATUS,
+         $filter: constants.SCHEMA_AGENT_STATUS.AGENT_ID + '="' + connection.userId + '" and ' + constants.SCHEMA_AGENT_STATUS.STATUS_ID + '!="' + constants.AGENT_STATUS_TYPES.ENGAGED + '"',
+         $limit: 1
+      };
 
+      dbService.query(freeAgentQuery, function (err, freeAgentResult) {
+         if (err) {
+            console.log('freeAgentQuery error: ', err);
+         } else {
+            if (freeAgentResult.length > 0) {
+               agentStatus.updateAgentStatusagentDetails(connection.userId, constants.AGENT_STATUS_TYPES.OFF_LINE, null, function () {
+
+               });
+            }
+         }
       });
       if (userConnections && Object.keys(userConnections).length > 0) {
          // for (var receiver in userConnections) {

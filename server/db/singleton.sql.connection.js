@@ -6,7 +6,7 @@ var config = require('../config');
 
 var sqlConfig = config.sqlConfig;
 
-// sqlConfig = config.sqlLocalConfig;
+sqlConfig = config.sqlLocalConfig;
 
 
 function endConnection() {

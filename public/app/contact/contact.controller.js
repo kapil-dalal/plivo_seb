@@ -227,13 +227,15 @@ app.controller('contactController', ["$scope", "$cookies", '$window', "httpServi
 
       $scope.call = function () {
          if ($scope.makeCallTxt == "Call") {
-            var dest = customerSessionPlivo; // $scope.sip;
+            var dest = $scope.sip;
             console.log('dest: ', dest);
             if (dest && isNotEmpty(dest)) {
                $scope.statusTxt = 'Calling..';
                $scope.makeCallTxt = 'End';
 
-               Plivo.conn.call(dest);
+               Plivo.conn.call(dest, {
+                  'X-PH-Customerid': '3',
+               });
             }
             else {
                $scope.statusTxt = 'Invalid Destination';

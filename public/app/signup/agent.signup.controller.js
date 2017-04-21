@@ -54,7 +54,23 @@ app.controller('signupAgentController', ["$scope", '$state', 'httpService',
          httpService.createAgent(agentForm,
             function (response) {
                console.log("controller createAgent response: ", response);
-               $state.go('call');
+               // after successful signup do login
+               var loginData = {
+                  user_name: $scope.user_name,
+                  password: $scope.password
+               }
+               console.log('signup loginData: ', loginData);
+               httpService.login(loginData,
+                  function (result) {
+                     console.log('signup login success.', result);
+                     $rootScope.agentDetails = result.data;
+                     sessionStorage.agentDetails = JSON.stringify(result.data);
+                     $state.go("dashboard");
+                  },
+                  function (err) {
+                     console.log('login error:', err);
+
+                  });
             },
             function (err) {
                console.log("controller createAgent err: ", err);
